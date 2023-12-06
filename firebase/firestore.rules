@@ -1,0 +1,20 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    match /users/{userId}/favs/{favId} {
+      allow read, create: if doesUserOwn(request.auth.uid, userId);
+      allow update, delete: if false;
+    }
+
+    // Default
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function doesUserOwn(incomingUid, targetUid) {
+      return incomingUid == targetUid;
+    }
+  }
+}
