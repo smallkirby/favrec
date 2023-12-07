@@ -17,3 +17,13 @@ jobs:
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_FAVREC_4D401 }}'
           channelId: live
           projectId: favrec-4d401
+
+      - name: Build functions
+        run: cd functions && npm ci --no-audit && npm run build
+
+      - name: Deploy Functions and Firestore
+        uses: w9jds/firebase-action@master
+        with:
+          args: deploy --only functions,firestore
+        env:
+          GCP_SA_KEY: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_FAVREC_4D401 }}
