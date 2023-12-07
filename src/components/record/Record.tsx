@@ -7,6 +7,7 @@ import dayjs from 'dayjs';
 import { PrettyFirebaseError, recordFav } from '@/lib/firebase/store';
 import { FirebaseAuthContext } from '@/lib/firebase/auth';
 import { useContext } from 'react';
+import { fetchPageInfo } from '@/lib/record/fetch';
 
 const validateURL = (url: string) => {
   try {
@@ -27,15 +28,25 @@ export default function Record() {
   const onSubmit = async (values: FavRecordForm) => {
     const user = userContext.user;
     if (user) {
-      const valuesToSubmit = {
-        ...values,
-        date: dayjs().toDate(),
-      };
       messageApi.open({
         key,
         type: 'loading',
         content: 'Recording your fav...',
       });
+
+      const record = await fetchPageInfo(values.url);
+      if (!record) {
+        messageApi.open({
+          key,
+          type: 'error',
+          content: 'Failed to fetch page info: failed to fetch page info.',
+        });
+        return;
+      }
+      const valuesToSubmit = {
+        ...record,
+        date: dayjs().toDate(),
+      };
 
       const res = await recordFav(user, valuesToSubmit);
       if (res instanceof PrettyFirebaseError) {
@@ -58,8 +69,6 @@ export default function Record() {
         content: 'User is not logged in.',
       });
     }
-
-    console.log('set');
   };
 
   return (
