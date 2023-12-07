@@ -10,7 +10,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+
       - run: npm ci --no-audit && npm run build
+
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
@@ -24,6 +26,7 @@ jobs:
       - name: Deploy Functions and Firestore
         uses: w9jds/firebase-action@master
         with:
-          args: deploy --only functions,firestore
+          # `--only functions,firestore` does not work, why...?
+          args: deploy --only firestore,functions
         env:
           GCP_SA_KEY: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_FAVREC_4D401 }}
