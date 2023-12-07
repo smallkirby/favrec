@@ -7,6 +7,7 @@ import { FavRecord } from '@/types/FavRecord';
 import { Pagination, Spin } from 'antd';
 import { useRouter } from 'next/navigation';
 import { useContext, useEffect, useState } from 'react';
+const perPage = 50;
 
 export default function FavsPage() {
   const [numTotal, setNumTotal] = useState(0);
@@ -34,7 +35,7 @@ export default function FavsPage() {
   }, [user]);
 
   useEffect(() => {
-    setRecords(allRecords.slice((pageNum - 1) * 1, pageNum * 1));
+    setRecords(allRecords.slice((pageNum - 1) * perPage, pageNum * perPage));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pageNum, allRecords]);
 
@@ -47,7 +48,7 @@ export default function FavsPage() {
           <Pagination
             defaultCurrent={pageNum}
             total={numTotal}
-            defaultPageSize={1}
+            defaultPageSize={perPage}
             showTotal={(total, range) => `${range[0]}-${range[1]} of ${total}`}
             showSizeChanger={false}
             onChange={onPageChange}

@@ -12,7 +12,7 @@
     "lint": "npm run prettier && npm run eslint",
     "lint:fix": "npm run prettier:fix && npm run eslint:fix",
     "start": "next start",
-    "emulate": "firebase emulators:start --only firestore,auth"
+    "emulate": "firebase emulators:start --only firestore,auth,functions"
   },
   "dependencies": {
     "@ant-design/cssinjs": "^1.18.0",

@@ -1,5 +1,6 @@
-import { FavRecord } from '@/types/FavRecord';
+import { FavRecord } from '../types/FavRecord';
 import axios from 'axios';
+import { JSDOM } from 'jsdom';
 
 const getImage = (
   doc: Document,
@@ -48,13 +49,13 @@ const getDescription = (
   return '';
 };
 
-const getFavicon = (doc: Document): string | null => {
+const getFavicon = (doc: Document, domain: string): string | null => {
   let favicon = doc.querySelector("link[rel='icon']");
   if (!favicon) favicon = doc.querySelector("link[rel='shortcut icon']");
-  if (!favicon) return null;
+  if (!favicon) return `https://${domain}/favicon.ico`;
 
   const href = favicon.getAttribute('href');
-  if (!href) return null;
+  if (!href) return `https://${domain}/favicon.ico`;
   return href;
 };
 
@@ -76,14 +77,13 @@ export const fetchPageInfo = async (
     return null;
   }
 
-  const parser = new DOMParser();
-  const doc = parser.parseFromString(res.data, 'text/html');
-  const metaTags = doc.getElementsByTagName('meta');
+  const { document } = new JSDOM(res.data).window;
+  const metaTags = document.getElementsByTagName('meta');
 
-  const title = doc.title;
+  const title = document.title;
   const domain = new URL(url).hostname;
-  let faviconUrl = getFavicon(doc);
-  const imageUrl = getImage(doc, domain, url);
+  let faviconUrl = getFavicon(document, domain);
+  const imageUrl = getImage(document, domain, url);
   const description = getDescription(metaTags, domain);
 
   // if favicon is relative path, convert it to absolute path

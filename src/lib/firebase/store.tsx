@@ -1,17 +1,9 @@
-import { store as db } from '@/lib/firebase/app';
+import { store as db, functions } from '@/lib/firebase/app';
 import { FavRecord } from '@/types/FavRecord';
 import { FirebaseUser } from '@/types/FirebaseUser';
 import { FirebaseError } from 'firebase/app';
-import {
-  addDoc,
-  collection,
-  doc,
-  getDocs,
-  limit,
-  orderBy,
-  query,
-  where,
-} from 'firebase/firestore';
+import { collection, doc, getDocs, orderBy, query } from 'firebase/firestore';
+import { httpsCallable } from 'firebase/functions';
 
 export class PrettyFirebaseError extends Error {
   readonly code: string;
@@ -38,24 +30,20 @@ export class PrettyFirebaseError extends Error {
   }
 }
 
-export const recordFav = async (user: FirebaseUser, record: FavRecord) => {
-  const usersRef = collection(db, 'users');
-  const userRef = doc(usersRef, user.uid);
-  const favsRef = collection(userRef, 'favs');
+export const recordFav = async (url: string) => {
+  const callable = httpsCallable(functions, 'recordPageInfo');
 
-  const existanceQuery = query(
-    favsRef,
-    where('url', '==', record.url),
-    limit(1)
-  );
-  const existanceSnap = await getDocs(existanceQuery);
-  if (!existanceSnap.empty) {
-    return new PrettyFirebaseError(new Error('Record already exists.'));
-  }
-
-  return await addDoc(favsRef, record)
-    .then((d) => d.id)
-    .catch((e) => new PrettyFirebaseError(e));
+  return await callable({ url })
+    .then((res: any) => {
+      if (res.data.err) {
+        return new PrettyFirebaseError(new Error(res.data.err));
+      } else {
+        return null;
+      }
+    })
+    .catch((err) => {
+      return new PrettyFirebaseError(err);
+    });
 };
 
 export const getNumFavs = async (user: FirebaseUser) => {

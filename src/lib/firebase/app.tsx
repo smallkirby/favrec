@@ -14,7 +14,7 @@ export const firebaseConfig: FirebaseOptions = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const store = getFirestore(app);
-const functions = getFunctions(app);
+const functions = getFunctions(app, 'asia-northeast1');
 
 if (process.env.NODE_ENV === 'development') {
   connectAuthEmulator(auth, 'http://localhost:9099');

@@ -3,11 +3,9 @@
 import { Button, Form, Input, message } from 'antd';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import { FavRecord } from '@/types/FavRecord';
-import dayjs from 'dayjs';
 import { PrettyFirebaseError, recordFav } from '@/lib/firebase/store';
 import { FirebaseAuthContext } from '@/lib/firebase/auth';
 import { useContext } from 'react';
-import { fetchPageInfo } from '@/lib/record/fetch';
 
 const validateURL = (url: string) => {
   try {
@@ -34,21 +32,7 @@ export default function Record() {
         content: 'Recording your fav...',
       });
 
-      const record = await fetchPageInfo(values.url);
-      if (!record) {
-        messageApi.open({
-          key,
-          type: 'error',
-          content: 'Failed to fetch page info: failed to fetch page info.',
-        });
-        return;
-      }
-      const valuesToSubmit = {
-        ...record,
-        date: dayjs().toDate(),
-      };
-
-      const res = await recordFav(user, valuesToSubmit);
+      const res = await recordFav(values.url);
       if (res instanceof PrettyFirebaseError) {
         messageApi.open({
           key,
