@@ -8,6 +8,7 @@ import {
   doc,
   getDocs,
   limit,
+  orderBy,
   query,
   where,
 } from 'firebase/firestore';
@@ -55,4 +56,23 @@ export const recordFav = async (user: FirebaseUser, record: FavRecord) => {
   return await addDoc(favsRef, record)
     .then((d) => d.id)
     .catch((e) => new PrettyFirebaseError(e));
+};
+
+export const getNumFavs = async (user: FirebaseUser) => {
+  const usersRef = collection(db, 'users');
+  const userRef = doc(usersRef, user.uid);
+  const favsRef = collection(userRef, 'favs');
+
+  const favsSnap = await getDocs(favsRef);
+  return favsSnap.size;
+};
+
+export const getAllFavs = async (user: FirebaseUser): Promise<FavRecord[]> => {
+  const usersRef = collection(db, 'users');
+  const userRef = doc(usersRef, user.uid);
+  const favsRef = collection(userRef, 'favs');
+
+  const quer = query(favsRef, orderBy('date', 'desc'));
+  const favsSnap = await getDocs(quer);
+  return favsSnap.docs.map((d) => d.data() as FavRecord);
 };

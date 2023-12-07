@@ -17,9 +17,11 @@ export default function LinkCard({ page }: Props) {
             h-[128px] p-0 max-w-5xl cursor-pointer flex content-between hover:shadow-lg duration-300"
         >
           {page ? (
-            <div className="flex-1 h-full py-4 px-8">
+            <div className="flex-1 h-full py-4 px-8 text-left">
               <h3 className="text-lg font-bold mb-2">{page.title}</h3>
-              <p className="text-sm text-gray-500">{page.description}</p>
+              <p className="text-sm text-gray-500 min-h-[20px]">
+                {page.description}
+              </p>
               <div className="flex mt-3">
                 <Image
                   src={page.faviconUrl ?? ''}
@@ -39,13 +41,17 @@ export default function LinkCard({ page }: Props) {
 
           {page ? (
             <div className="max-w-[230px] h-full relative w-[230px]">
-              <Image
-                fill
-                src={page.imageUrl ?? ''}
-                alt={page.title}
-                className="rounded-r-lg shadow-md"
-                objectFit="cover"
-              />
+              {page.imageUrl ? (
+                <Image
+                  fill
+                  src={page.imageUrl ?? ''}
+                  alt={page.title}
+                  className="rounded-r-lg shadow-md"
+                  objectFit="cover"
+                />
+              ) : (
+                <Skeleton.Image style={{ height: '128px', width: '230px' }} />
+              )}
             </div>
           ) : (
             <Skeleton.Image
