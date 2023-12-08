@@ -17,10 +17,10 @@ export default function LinkCard({ page, onRemove }: Props) {
         className="border-[1px] border-gray-300 dark:border-slate-600 drop-shadow-md rounded-lg
             justify-between overflow-hidden
             p-0 w-full h-[100px] md:h-[140px] max-w-5xl cursor-pointer text-left
-            flex content-between hover:shadow-lg duration-300 items-stretch"
+            flex content-between hover:shadow-lg duration-300"
       >
         {page ? (
-          <div className="h-full pt-4 pb-2 px-3 md:px-4 text-left w-full flex justify-between flex-col">
+          <div className="h-full pt-4 pb-2 px-3 md:px-4 text-left w-full flex justify-between flex-col overflow-hidden">
             <div className="overflow-hidden">
               <a href={page.url}>
                 <h3
@@ -72,7 +72,7 @@ export default function LinkCard({ page, onRemove }: Props) {
         )}
 
         {page ? (
-          <div className="w-[100px] md:w-[200px] h-[100px] md:h-[140px] flex justify-end flex-shrink-0">
+          <div className="w-[100px] md:w-[200px] h-[100px] md:h-[140px] shrink-0">
             {page.imageUrl ? (
               <Image
                 src={page.imageUrl}
@@ -87,7 +87,7 @@ export default function LinkCard({ page, onRemove }: Props) {
                 }}
               />
             ) : (
-              <Skeleton.Image className="!w-[100px] md:!w-[200px] !h-[100px] md:!h-[140px]" />
+              <Skeleton.Image className="w-![100px] md:!w-[200px] !h-[100px] md:!h-[140px]" />
             )}
           </div>
         ) : (
