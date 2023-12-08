@@ -5,8 +5,8 @@ import { FavConfigProvider } from '@/lib/theme';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'FavRecorder',
-  description: 'TODO',
+  title: 'FavRec',
+  description: 'Record your favorites and remember them forever.',
 };
 
 export default function RootLayout({
