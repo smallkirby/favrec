@@ -5,14 +5,10 @@
   "eslint.workingDirectories": [
     {
       "mode": "location"
-    },
+    }
   ],
   "remote.extensionKind": {
-    "dbaeumer.vscode-eslint": [
-      "workspace"
-    ],
-    "esbenp.prettier-vscode": [
-      "workspace"
-    ]
+    "dbaeumer.vscode-eslint": ["workspace"],
+    "esbenp.prettier-vscode": ["workspace"]
   }
 }

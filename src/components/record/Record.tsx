@@ -7,6 +7,7 @@ import { PrettyFirebaseError, recordFav } from '@/lib/firebase/store';
 import { FirebaseAuthContext } from '@/lib/firebase/auth';
 import { useContext } from 'react';
 import { FavConfigProvider } from '@/lib/theme';
+import { useForm } from 'antd/es/form/Form';
 
 const validateURL = (url: string) => {
   try {
@@ -23,6 +24,7 @@ export default function Record() {
   const userContext = useContext(FirebaseAuthContext);
   const [messageApi, contextHolder] = message.useMessage();
   const key = 'record';
+  const [form] = useForm<FavRecordForm>();
 
   const onSubmit = async (values: FavRecordForm) => {
     const user = userContext.user;
@@ -47,6 +49,7 @@ export default function Record() {
           type: 'success',
           content: 'Recorded successfully.',
         });
+        form.resetFields();
       }
     } else {
       messageApi.open({
@@ -62,13 +65,17 @@ export default function Record() {
       <FavConfigProvider>
         {contextHolder}
 
-        <Form layout="horizontal" labelCol={{ span: 1 }} onFinish={onSubmit}>
+        <Form
+          layout="horizontal"
+          labelCol={{ span: 1 }}
+          onFinish={onSubmit}
+          form={form}
+        >
           <Form.Item
             name="url"
             rules={[
               {
                 required: true,
-                message: 'URL you read/liked',
               },
               () => ({
                 validator(_, value: string | undefined) {
@@ -80,7 +87,11 @@ export default function Record() {
               }),
             ]}
           >
-            <Input placeholder="URL you read/liked" spellCheck={false} />
+            <Input
+              placeholder="URL you read/liked"
+              spellCheck={false}
+              allowClear
+            />
           </Form.Item>
 
           <Form.Item className="text-center">
