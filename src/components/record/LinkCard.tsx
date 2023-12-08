@@ -20,7 +20,10 @@ export default function LinkCard({ page, onRemove }: Props) {
             duration-300 hover:shadow-lg dark:border-slate-600 md:h-[140px]"
       >
         {page ? (
-          <div className="flex h-full w-full flex-col justify-between overflow-hidden px-3 pb-2 pt-4 text-left md:px-4">
+          <div
+            className="flex h-full w-full flex-col justify-between overflow-hidden
+            px-3 pb-2 pt-4 text-left md:px-4 md:pb-3"
+          >
             <div className="overflow-hidden">
               <a href={page.url}>
                 <h3
