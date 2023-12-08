@@ -62,5 +62,11 @@ export const getAllFavs = async (user: FirebaseUser): Promise<FavRecord[]> => {
 
   const quer = query(favsRef, orderBy('date', 'desc'));
   const favsSnap = await getDocs(quer);
-  return favsSnap.docs.map((d) => d.data() as FavRecord);
+  return favsSnap.docs.map((d) => {
+    const data = d.data();
+    return {
+      ...(data as FavRecord),
+      date: data.date.toDate(),
+    };
+  });
 };

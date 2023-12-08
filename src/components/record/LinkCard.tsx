@@ -3,6 +3,7 @@
 import { FavRecord } from '@/types/FavRecord';
 import { Skeleton } from 'antd';
 import Image from 'next/image';
+import dayjs from 'dayjs';
 
 type Props = {
   page: FavRecord | null;
@@ -24,15 +25,22 @@ export default function LinkCard({ page }: Props) {
               <p className="text-sm text-gray-500 h-[20px] overflow-hidden">
                 {page.description}
               </p>
-              <div className="flex mt-3 items-center">
-                <Image
-                  src={page.faviconUrl ?? ''}
-                  alt="favicon"
-                  width={16}
-                  height={16}
-                  className="mr-1 w-[16px] h-[16px] mt-[3px]"
-                />
-                <span className="text-sm">{page.domain}</span>
+              <div className="mt-3 flex justify-between">
+                <div className="flex items-center">
+                  <Image
+                    src={page.faviconUrl ?? ''}
+                    alt="favicon"
+                    width={16}
+                    height={16}
+                    className="mr-1 w-[16px] h-[16px] mt-[3px]"
+                  />
+                  <span className="text-sm">{page.domain}</span>
+                </div>
+                <div>
+                  <span className="text-xs text-gray-400">
+                    Recorded at {dayjs(page.date).format('YYYY/MM/DD')}
+                  </span>
+                </div>
               </div>
             </div>
           ) : (
