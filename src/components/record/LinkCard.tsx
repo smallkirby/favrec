@@ -14,15 +14,15 @@ export default function LinkCard({ page }: Props) {
     <>
       <a href={page?.url ?? ''}>
         <div
-          className="border-[1px] border-gray-300 drop-shadow-md rounded-lg
-            h-[140px] p-0 max-w-5xl cursor-pointer flex content-between hover:shadow-lg duration-300"
+          className="border-[1px] border-gray-300 drop-shadow-md rounded-lg justify-between
+            max-h-[140px] p-0 w-full max-w-5xl cursor-pointer flex content-between hover:shadow-lg duration-300"
         >
           {page ? (
-            <div className="flex-1 h-full py-4 px-8 text-left">
-              <h3 className="text-lg font-bold mb-2 h-[50px] overflow-hidden">
+            <div className="flex-grow h-full py-4 px-8 text-left">
+              <h3 className="text-lg font-bold mb-2 overflow-hidden">
                 {page.title}
               </h3>
-              <p className="text-sm text-gray-500 h-[20px] overflow-hidden">
+              <p className="text-sm text-gray-500 overflow-hidden">
                 {page.description}
               </p>
               <div className="mt-3 flex justify-between">
@@ -32,7 +32,7 @@ export default function LinkCard({ page }: Props) {
                     alt="favicon"
                     width={16}
                     height={16}
-                    className="mr-1 w-[16px] h-[16px] mt-[3px]"
+                    className="w-[14px] h-[14px] mr-1"
                   />
                   <span className="text-sm">{page.domain}</span>
                 </div>
@@ -50,17 +50,18 @@ export default function LinkCard({ page }: Props) {
           )}
 
           {page ? (
-            <div className="max-w-[230px] h-full relative w-[230px]">
+            <div className="w-[200px] flex justify-end">
               {page.imageUrl ? (
                 <Image
-                  fill
+                  width={0}
+                  height={0}
                   src={page.imageUrl ?? ''}
                   alt={page.title}
-                  className="rounded-r-lg shadow-md"
-                  objectFit="cover"
+                  className="rounded-r-lg object-scale-down"
+                  style={{ height: '100%', width: 'auto', maxWidth: '200px' }}
                 />
               ) : (
-                <Skeleton.Image style={{ height: '140px', width: '230px' }} />
+                <Skeleton.Image style={{ height: '100%', width: '200px' }} />
               )}
             </div>
           ) : (
