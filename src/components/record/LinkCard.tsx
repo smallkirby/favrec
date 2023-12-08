@@ -21,13 +21,13 @@ export default function LinkCard({ page, onRemove }: Props) {
       >
         {page ? (
           <div className="h-full pt-4 pb-2 px-3 md:px-4 text-left w-full flex justify-between flex-col">
-            <div className="max-h-[75px] overflow-hidden">
+            <div className="overflow-hidden">
               <a href={page.url}>
                 <h3
                   className="text-xs md:text-lg font-bold mb-2 overflow-hidden text-ellipsis"
                   style={{
                     display: '-webkit-box',
-                    WebkitLineClamp: 2,
+                    WebkitLineClamp: page.description.length > 0 ? 1 : 2,
                     WebkitBoxOrient: 'vertical',
                   }}
                 >
