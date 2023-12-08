@@ -5,6 +5,16 @@ import { JSDOM } from 'jsdom';
 axios.defaults.responseType = 'arraybuffer';
 axios.defaults.responseEncoding = 'utf-8';
 
+const complementPathUrl = (url: string, domain: string): string => {
+  if (url.startsWith('http')) return url;
+
+  if (url.startsWith('/')) {
+    return `https://${domain}${url}`;
+  }
+
+  return `https://${domain}/${url}`;
+};
+
 const getTitle = (doc: Document): string => {
   const ogTitle = doc.querySelector("meta[property='og:title']");
   if (ogTitle) {
@@ -33,27 +43,29 @@ const getImage = (
     case 'zenn.dev':
       const userName = url.split('/')[3];
       const img = doc.querySelector(`img[alt='${userName}']`);
-      if (img) return img.getAttribute('src');
+      if (img && img.getAttribute('href')) {
+        return complementPathUrl(img.getAttribute('src')!, domain);
+      }
       break;
   }
 
   const ogImage = doc.querySelector("meta[property='og:image']");
   if (ogImage) {
     const content = ogImage.getAttribute('content');
-    if (content) return content;
+    if (content) return complementPathUrl(content, domain);
   }
 
   const twitterCard = doc.querySelector("meta[name='twitter:image']");
   if (twitterCard) {
     const content = twitterCard.getAttribute('content');
-    if (content) return content;
+    if (content) return complementPathUrl(content, domain);
   }
 
   // Use the first img by default
   const img = doc.querySelector('img');
   if (img) {
     const src = img.getAttribute('src');
-    if (src) return src;
+    if (src) return complementPathUrl(src, domain);
   }
 
   return null;
@@ -95,7 +107,7 @@ const getFavicon = (doc: Document, domain: string): string | null => {
 
   const href = favicon.getAttribute('href');
   if (!href) return `https://${domain}/favicon.ico`;
-  return href;
+  return complementPathUrl(href, domain);
 };
 
 export const fetchPageInfo = async (
