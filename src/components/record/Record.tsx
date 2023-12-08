@@ -30,6 +30,7 @@ export default function Record() {
         key,
         type: 'loading',
         content: 'Recording your fav...',
+        duration: 0,
       });
 
       const res = await recordFav(values.url);
