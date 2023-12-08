@@ -14,7 +14,8 @@ export default function LinkCard({ page, onRemove }: Props) {
   return (
     <>
       <div
-        className="border-[1px] border-gray-300 drop-shadow-md rounded-lg justify-between overflow-hidden
+        className="border-[1px] border-gray-300 dark:border-slate-600 drop-shadow-md rounded-lg
+            justify-between overflow-hidden
             p-0 w-full h-[100px] md:h-[140px] max-w-5xl cursor-pointer text-left
             flex content-between hover:shadow-lg duration-300 items-stretch"
       >
@@ -34,7 +35,7 @@ export default function LinkCard({ page, onRemove }: Props) {
                 </h3>
               </a>
               <p
-                className="text-[0.625rem] md:text-sm text-gray-500 overflow-hidden text-ellipsis"
+                className="text-[0.625rem] md:text-sm text-gray-400 overflow-hidden text-ellipsis"
                 style={{
                   display: '-webkit-box',
                   WebkitLineClamp: 1,
@@ -53,7 +54,9 @@ export default function LinkCard({ page, onRemove }: Props) {
                   height={16}
                   className="w-[14px] h-[14px] mr-1"
                 />
-                <span className="md:text-sm">{page.domain}</span>
+                <span className="md:text-sm dark:text-gray-400">
+                  {page.domain}
+                </span>
               </div>
               <div className="items-left text-[0.625rem]">
                 <span className="text-gray-400 mr-1">

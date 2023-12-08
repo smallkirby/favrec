@@ -11,7 +11,7 @@ export default function Header() {
   return (
     <header className="navbar flex justify-between m-4 items-center">
       <button
-        className="font-cute border-none bg-inherit cursor-pointer py-0 duration-300
+        className="font-cute border-none dark:bg-slate-800 cursor-pointer py-0 duration-300
         flex items-center text-pink-500 hover:text-pink-800"
         onClick={() => router.push('/')}
       >

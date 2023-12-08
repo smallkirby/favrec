@@ -1,6 +1,7 @@
 'use client';
 
 import { FirebaseAuthContext, logout } from '@/lib/firebase/auth';
+import { FavConfigProvider } from '@/lib/theme';
 import { LoginOutlined, LogoutOutlined, UserOutlined } from '@ant-design/icons';
 import { Avatar, Dropdown, Image, MenuProps, Space, Spin } from 'antd';
 import { useRouter } from 'next/navigation';
@@ -29,32 +30,34 @@ export default function UserBadge() {
   };
 
   return (
-    <FirebaseAuthContext.Consumer>
-      {({ user }) => (
-        <Dropdown menu={{ items: [...items, user ? menuLogout : menuLogin] }}>
-          <Space wrap size={16}>
-            {user === undefined ? (
-              <Spin size="large" />
-            ) : (
-              <Avatar
-                size={40}
-                icon={
-                  user && user.photoUrl ? (
-                    <Image
-                      src={user.photoUrl}
-                      alt={user.displayName || ''}
-                      preview={false}
-                      className="w-full h-full"
-                    />
-                  ) : (
-                    <UserOutlined />
-                  )
-                }
-              />
-            )}
-          </Space>
-        </Dropdown>
-      )}
-    </FirebaseAuthContext.Consumer>
+    <FavConfigProvider>
+      <FirebaseAuthContext.Consumer>
+        {({ user }) => (
+          <Dropdown menu={{ items: [...items, user ? menuLogout : menuLogin] }}>
+            <Space wrap size={16}>
+              {user === undefined ? (
+                <Spin size="large" />
+              ) : (
+                <Avatar
+                  size={40}
+                  icon={
+                    user && user.photoUrl ? (
+                      <Image
+                        src={user.photoUrl}
+                        alt={user.displayName || ''}
+                        preview={false}
+                        className="w-full h-full"
+                      />
+                    ) : (
+                      <UserOutlined />
+                    )
+                  }
+                />
+              )}
+            </Space>
+          </Dropdown>
+        )}
+      </FirebaseAuthContext.Consumer>
+    </FavConfigProvider>
   );
 }

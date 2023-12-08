@@ -2,6 +2,7 @@ import { EmergencyRecording, FormatListBulleted } from '@mui/icons-material';
 import { useState } from 'react';
 import { Menu, MenuProps } from 'antd';
 import { usePathname } from 'next/navigation';
+import { FavConfigProvider } from '@/lib/theme';
 
 const menuItems: MenuProps['items'] = [
   {
@@ -34,11 +35,14 @@ export default function HeadMenu() {
   const [current, setCurrent] = useState(getSelectedKey(pathname));
 
   return (
-    <Menu
-      onClick={(e) => setCurrent(e.key)}
-      selectedKeys={[current]}
-      items={menuItems}
-      mode="horizontal"
-    />
+    <FavConfigProvider>
+      <Menu
+        onClick={(e) => setCurrent(e.key)}
+        selectedKeys={[current]}
+        items={menuItems}
+        mode="horizontal"
+        className="dark:bg-slate-800"
+      />
+    </FavConfigProvider>
   );
 }

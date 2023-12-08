@@ -3,6 +3,7 @@
 import LinkCard from '@/components/record/LinkCard';
 import { FirebaseAuthContext } from '@/lib/firebase/auth';
 import { deleteFav, getAllFavs, getNumFavs } from '@/lib/firebase/store';
+import { FavConfigProvider } from '@/lib/theme';
 import { FavRecord } from '@/types/FavRecord';
 import { Pagination, Spin, message } from 'antd';
 import { useRouter } from 'next/navigation';
@@ -62,13 +63,13 @@ export default function FavsPage() {
   }, [pageNum, allRecords]);
 
   return (
-    <>
+    <FavConfigProvider>
       {contextHolder}
       <Spin spinning={user === undefined} fullscreen />
 
       {user !== undefined && (
         <div className="text-center w-full md:w-2/3 mx-auto">
-          <div className="sticky bg-white top-0 z-50 py-2">
+          <div className="sticky bg-white dark:bg-slate-800 top-0 z-50 py-2">
             <Pagination
               defaultCurrent={pageNum}
               total={numTotal}
@@ -90,6 +91,6 @@ export default function FavsPage() {
           </div>
         </div>
       )}
-    </>
+    </FavConfigProvider>
   );
 }

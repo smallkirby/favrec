@@ -6,6 +6,7 @@ import { FavRecord } from '@/types/FavRecord';
 import { PrettyFirebaseError, recordFav } from '@/lib/firebase/store';
 import { FirebaseAuthContext } from '@/lib/firebase/auth';
 import { useContext } from 'react';
+import { FavConfigProvider } from '@/lib/theme';
 
 const validateURL = (url: string) => {
   try {
@@ -57,40 +58,42 @@ export default function Record() {
   };
 
   return (
-    <div className="rounded-lg p-4">
-      {contextHolder}
+    <div className="p-4">
+      <FavConfigProvider>
+        {contextHolder}
 
-      <Form layout="horizontal" labelCol={{ span: 1 }} onFinish={onSubmit}>
-        <Form.Item
-          name="url"
-          rules={[
-            {
-              required: true,
-              message: 'URL you read/liked',
-            },
-            () => ({
-              validator(_, value: string | undefined) {
-                if (!!value && validateURL(value)) {
-                  return Promise.resolve();
-                }
-                return Promise.reject(new Error('Invalid URL'));
+        <Form layout="horizontal" labelCol={{ span: 1 }} onFinish={onSubmit}>
+          <Form.Item
+            name="url"
+            rules={[
+              {
+                required: true,
+                message: 'URL you read/liked',
               },
-            }),
-          ]}
-        >
-          <Input placeholder="URL you read/liked" spellCheck={false} />
-        </Form.Item>
+              () => ({
+                validator(_, value: string | undefined) {
+                  if (!!value && validateURL(value)) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject(new Error('Invalid URL'));
+                },
+              }),
+            ]}
+          >
+            <Input placeholder="URL you read/liked" spellCheck={false} />
+          </Form.Item>
 
-        <Form.Item className="text-center">
-          <Button htmlType="submit">
-            <AddCircleOutlineIcon
-              sx={{ width: 20, height: 20 }}
-              className="pb-[1px]"
-            />
-            <span className="ml-1">Record</span>
-          </Button>
-        </Form.Item>
-      </Form>
+          <Form.Item className="text-center">
+            <Button htmlType="submit">
+              <AddCircleOutlineIcon
+                sx={{ width: 20, height: 20 }}
+                className="pb-[1px]"
+              />
+              <span className="ml-1">Record</span>
+            </Button>
+          </Form.Item>
+        </Form>
+      </FavConfigProvider>
     </div>
   );
 }
