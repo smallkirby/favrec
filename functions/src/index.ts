@@ -32,6 +32,20 @@ export const recordPageInfo = functions
       };
     }
 
+    const favsRefs = firestore()
+      .collection('users')
+      .doc(uid)
+      .collection('favs');
+    const exist = await favsRefs
+      .where('url', '==', url)
+      .get()
+      .then((snapshot) => !snapshot.empty);
+    if (exist) {
+      return {
+        err: 'Already exists',
+      };
+    }
+
     const record: FavRecord = {
       ...page,
       date: new Date(),
