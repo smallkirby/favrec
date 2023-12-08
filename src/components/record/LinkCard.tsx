@@ -4,32 +4,42 @@ import { FavRecord } from '@/types/FavRecord';
 import { Skeleton } from 'antd';
 import Image from 'next/image';
 import dayjs from 'dayjs';
-import { DeleteForever } from '@mui/icons-material';
 
 type Props = {
   page: FavRecord | null;
   onRemove: (url: string) => void;
 };
 
+const trimString = (str: string, numChars: number) => {
+  const trimmed = str.slice(0, numChars);
+  if (trimmed.length < str.length) {
+    return trimmed + '...';
+  } else {
+    return trimmed;
+  }
+};
+
 export default function LinkCard({ page, onRemove }: Props) {
   return (
     <>
       <div
-        className="flex-grow border-[1px] border-gray-300 drop-shadow-md rounded-lg justify-between overflow-hidden
-            p-0 w-full min-h-[128px] max-w-5xl cursor-pointer text-left
+        className="border-[1px] border-gray-300 drop-shadow-md rounded-lg justify-between overflow-hidden
+            p-0 w-full h-[100px] md:h-[140px] max-w-5xl cursor-pointer text-left
             flex content-between hover:shadow-lg duration-300 items-stretch"
       >
         {page ? (
-          <div className="h-full py-4 px-3 md:px-8 text-left w-full">
-            <a href={page.url}>
-              <h3 className="text-xs md:text-lg font-bold mb-2 overflow-hidden">
-                {page.title}
-              </h3>
-            </a>
-            <p className="text-xs md:text-sm text-gray-500 overflow-hidden">
-              {page.description}
-            </p>
-            <div className="mt-3 flex justify-between flex-col md:flex-row text-left">
+          <div className="h-full pt-4 pb-2 px-3 md:px-4 text-left w-full flex justify-between flex-col">
+            <div className="max-h-[75px] overflow-hidden">
+              <a href={page.url}>
+                <h3 className="text-xs md:text-lg font-bold mb-2 overflow-hidden">
+                  {trimString(page.title, 40)}
+                </h3>
+              </a>
+              <p className="md:text-sm text-gray-500 overflow-hidden hidden md:block">
+                {page.description}
+              </p>
+            </div>
+            <div className="mt-3 flex justify-between text-left text-[0.625rem] items-center flex-shrink-0">
               <div className="flex items-center">
                 <Image
                   src={page.faviconUrl ?? ''}
@@ -38,15 +48,12 @@ export default function LinkCard({ page, onRemove }: Props) {
                   height={16}
                   className="w-[14px] h-[14px] mr-1"
                 />
-                <span className="text-xs md:text-sm">{page.domain}</span>
+                <span className="md:text-sm">{page.domain}</span>
               </div>
-              <div className="items-left">
-                <span className="text-xs text-gray-400 mr-1">
-                  Recorded at {dayjs(page.date).format('YYYY/MM/DD')}
+              <div className="items-left text-[0.625rem]">
+                <span className="text-gray-400 mr-1">
+                  {dayjs(page.date).format('YYYY/MM/DD')}
                 </span>
-                <button onClick={() => onRemove(page.url)} className="z-50">
-                  <DeleteForever className="opacity-50 hover:opacity-100 text-red-500" />
-                </button>
               </div>
             </div>
           </div>
@@ -57,7 +64,7 @@ export default function LinkCard({ page, onRemove }: Props) {
         )}
 
         {page ? (
-          <div className="w-[100px] md:w-[200px] flex justify-end flex-grow">
+          <div className="w-[100px] md:w-[200px] h-[100px] md:h-[140px] flex justify-end flex-shrink-0">
             {page.imageUrl ? (
               <Image
                 src={page.imageUrl}
@@ -72,17 +79,14 @@ export default function LinkCard({ page, onRemove }: Props) {
                 }}
               />
             ) : (
-              <Skeleton.Image
-                style={{ height: '100%', width: '158' }}
-                className="!w-[100px] md:!w-[158px]"
-              />
+              <Skeleton.Image className="!w-[100px] md:!w-[200px] !h-[100px] md:!h-[140px]" />
             )}
           </div>
         ) : (
           <Skeleton.Image
             active={true}
             style={{ height: '100%', width: '158px' }}
-            className="!w-[100px] md:w-![158px]"
+            className="!w-[100px] md:w-![158px] h-[100px] md:h-[140px]"
           />
         )}
       </div>

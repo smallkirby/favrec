@@ -68,15 +68,18 @@ export default function FavsPage() {
 
       {user !== undefined && (
         <div className="text-center w-full md:w-2/3 mx-auto">
-          <Pagination
-            defaultCurrent={pageNum}
-            total={numTotal}
-            defaultPageSize={perPage}
-            showTotal={(total, range) => `${range[0]}-${range[1]} of ${total}`}
-            showSizeChanger={false}
-            onChange={onPageChange}
-            className="mb-8"
-          />
+          <div className="sticky bg-white top-0 z-50 py-2">
+            <Pagination
+              defaultCurrent={pageNum}
+              total={numTotal}
+              defaultPageSize={perPage}
+              showTotal={(total, range) =>
+                `${range[0]}-${range[1]} of ${total}`
+              }
+              showSizeChanger={false}
+              onChange={onPageChange}
+            />
+          </div>
 
           <div>
             {records.map((record) => (
