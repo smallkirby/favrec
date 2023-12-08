@@ -9,17 +9,17 @@ export default function Header() {
   const router = useRouter();
 
   return (
-    <header className="navbar flex justify-between m-4 items-center">
+    <header className="navbar m-4 flex items-center justify-between">
       <button
-        className="font-cute border-none dark:bg-slate-800 cursor-pointer py-0 duration-300
-        flex items-center text-pink-500 hover:text-pink-800"
+        className="flex cursor-pointer items-center border-none py-0 font-cute
+        text-pink-500 duration-300 hover:text-pink-800 dark:bg-slate-800"
         onClick={() => router.push('/')}
       >
-        <h1 className="text-lg mr-1">FAVREC</h1>
+        <h1 className="mr-1 text-lg">FAVREC</h1>
         <FavoriteIcon sx={{ width: 20, height: 20 }} className="pb-[1px]" />
       </button>
 
-      <div className="flex-1 ml-8">
+      <div className="ml-8 flex-1">
         <HeadMenu />
       </div>
 

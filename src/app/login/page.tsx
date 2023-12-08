@@ -16,7 +16,7 @@ export default function Login() {
   }, [authContext.user, router]);
 
   return (
-    <div className="mx-auto w-full text-center pt-8">
+    <div className="mx-auto w-full pt-8 text-center">
       <LoginBox />
     </div>
   );

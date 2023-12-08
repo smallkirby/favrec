@@ -14,17 +14,17 @@ export default function LinkCard({ page, onRemove }: Props) {
   return (
     <>
       <div
-        className="border-[1px] border-gray-300 dark:border-slate-600 drop-shadow-md rounded-lg
-            justify-between overflow-hidden
-            p-0 w-full h-[100px] md:h-[140px] max-w-5xl cursor-pointer text-left
-            flex content-between hover:shadow-lg duration-300"
+        className="flex h-[100px] w-full max-w-5xl cursor-pointer
+            content-between justify-between
+            overflow-hidden rounded-lg border-[1px] border-gray-300 p-0 text-left drop-shadow-md
+            duration-300 hover:shadow-lg dark:border-slate-600 md:h-[140px]"
       >
         {page ? (
-          <div className="h-full pt-4 pb-2 px-3 md:px-4 text-left w-full flex justify-between flex-col overflow-hidden">
+          <div className="flex h-full w-full flex-col justify-between overflow-hidden px-3 pb-2 pt-4 text-left md:px-4">
             <div className="overflow-hidden">
               <a href={page.url}>
                 <h3
-                  className="text-xs md:text-lg font-bold mb-2 overflow-hidden text-ellipsis"
+                  className="mb-2 overflow-hidden text-ellipsis text-xs font-bold md:text-lg"
                   style={{
                     display: '-webkit-box',
                     WebkitLineClamp: page.description.length > 0 ? 1 : 2,
@@ -35,7 +35,7 @@ export default function LinkCard({ page, onRemove }: Props) {
                 </h3>
               </a>
               <p
-                className="text-[0.625rem] md:text-sm text-gray-400 overflow-hidden text-ellipsis"
+                className="overflow-hidden text-ellipsis text-[0.625rem] text-gray-400 md:text-sm "
                 style={{
                   display: '-webkit-box',
                   WebkitLineClamp: 1,
@@ -45,34 +45,34 @@ export default function LinkCard({ page, onRemove }: Props) {
                 {page.description}
               </p>
             </div>
-            <div className="mt-3 flex justify-between text-left text-[0.625rem] items-center flex-shrink-0">
+            <div className="mt-3 flex flex-shrink-0 items-center justify-between text-left text-[0.625rem]">
               <div className="flex items-center">
                 <Image
                   src={page.faviconUrl ?? ''}
                   alt="favicon"
                   width={16}
                   height={16}
-                  className="w-[14px] h-[14px] mr-1"
+                  className="mr-1 h-[14px] w-[14px]"
                 />
-                <span className="md:text-sm dark:text-gray-400">
+                <span className="dark:text-gray-400 md:text-sm">
                   {page.domain}
                 </span>
               </div>
               <div className="items-left text-[0.625rem]">
-                <span className="text-gray-400 mr-1">
+                <span className="mr-1 text-gray-400">
                   {dayjs(page.date).format('YYYY/MM/DD')}
                 </span>
               </div>
             </div>
           </div>
         ) : (
-          <div className="flex-1 py-4 px-8 overflow-hidden h-4/5">
+          <div className="h-4/5 flex-1 overflow-hidden px-8 py-4">
             <Skeleton active />
           </div>
         )}
 
         {page ? (
-          <div className="w-[100px] md:w-[200px] h-[100px] md:h-[140px] shrink-0">
+          <div className="h-[100px] w-[100px] shrink-0 md:h-[140px] md:w-[200px]">
             {page.imageUrl ? (
               <Image
                 src={page.imageUrl}
@@ -87,14 +87,14 @@ export default function LinkCard({ page, onRemove }: Props) {
                 }}
               />
             ) : (
-              <Skeleton.Image className="w-![100px] md:!w-[200px] !h-[100px] md:!h-[140px]" />
+              <Skeleton.Image className="w-![100px] !h-[100px] md:!h-[140px] md:!w-[200px]" />
             )}
           </div>
         ) : (
           <Skeleton.Image
             active={true}
             style={{ height: '100%', width: '158px' }}
-            className="!w-[100px] md:w-![158px] h-[100px] md:h-[140px]"
+            className="md:w-![158px] h-[100px] !w-[100px] md:h-[140px]"
           />
         )}
       </div>

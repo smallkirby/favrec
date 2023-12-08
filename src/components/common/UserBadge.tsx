@@ -46,7 +46,7 @@ export default function UserBadge() {
                         src={user.photoUrl}
                         alt={user.displayName || ''}
                         preview={false}
-                        className="w-full h-full"
+                        className="h-full w-full"
                       />
                     ) : (
                       <UserOutlined />

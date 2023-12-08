@@ -26,7 +26,7 @@ export default function LoginBox() {
 
   return (
     <FavConfigProvider>
-      <Card className="mx-4 md:mx-auto md:w-96 text-center dark:bg-slate-800 dark:border-slate-500">
+      <Card className="mx-4 text-center dark:border-slate-500 dark:bg-slate-800 md:mx-auto md:w-96">
         <div className="my-2">
           <Image
             src="https://github.githubassets.com/images/modules/logos_page/Octocat.png"
@@ -34,7 +34,7 @@ export default function LoginBox() {
             width={50}
           />
           <div className="mt-2">
-            <h1 className="text-lg mb-4">Sign in with GitHub</h1>
+            <h1 className="mb-4 text-lg">Sign in with GitHub</h1>
             <Button className="w-48" loading={isLoading} onClick={onClickLogin}>
               Login / Signup
             </Button>

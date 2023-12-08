@@ -68,8 +68,8 @@ export default function FavsPage() {
       <Spin spinning={user === undefined} fullscreen />
 
       {user !== undefined && (
-        <div className="text-center w-full md:w-2/3 mx-auto">
-          <div className="sticky bg-white dark:bg-slate-800 top-0 z-50 py-2">
+        <div className="mx-auto w-full text-center md:w-2/3">
+          <div className="sticky top-0 z-50 bg-white py-2 dark:bg-slate-800">
             <Pagination
               defaultCurrent={pageNum}
               total={numTotal}
