@@ -2,6 +2,28 @@ import { FavRecord } from '../types/FavRecord';
 import axios from 'axios';
 import { JSDOM } from 'jsdom';
 
+axios.defaults.responseType = 'arraybuffer';
+axios.defaults.responseEncoding = 'utf-8';
+
+const getTitle = (doc: Document): string => {
+  const ogTitle = doc.querySelector("meta[property='og:title']");
+  if (ogTitle) {
+    const content = ogTitle.getAttribute('content');
+    if (content) return content;
+  }
+
+  const title = doc.title;
+  if (title) return title;
+
+  const twitterCard = doc.querySelector("meta[name='twitter:title']");
+  if (twitterCard) {
+    const content = twitterCard.getAttribute('content');
+    if (content) return content;
+  }
+
+  return '';
+};
+
 const getImage = (
   doc: Document,
   domain: string,
@@ -15,11 +37,23 @@ const getImage = (
       break;
   }
 
-  // Use twitter card image by default
+  const ogImage = doc.querySelector("meta[property='og:image']");
+  if (ogImage) {
+    const content = ogImage.getAttribute('content');
+    if (content) return content;
+  }
+
   const twitterCard = doc.querySelector("meta[name='twitter:image']");
   if (twitterCard) {
     const content = twitterCard.getAttribute('content');
     if (content) return content;
+  }
+
+  // Use the first img by default
+  const img = doc.querySelector('img');
+  if (img) {
+    const src = img.getAttribute('src');
+    if (src) return src;
   }
 
   return null;
@@ -39,7 +73,12 @@ const getDescription = (
       break;
   }
 
-  // Use twitter card description by default
+  const ogDescription = metaTags.namedItem('og:description');
+  if (ogDescription) {
+    const content = ogDescription.getAttribute('content');
+    if (content) return content;
+  }
+
   const twitterCard = metaTags.namedItem('twitter:description');
   if (twitterCard) {
     const content = twitterCard.getAttribute('content');
@@ -80,7 +119,7 @@ export const fetchPageInfo = async (
   const { document } = new JSDOM(res.data).window;
   const metaTags = document.getElementsByTagName('meta');
 
-  const title = document.title;
+  const title = getTitle(document);
   const domain = new URL(url).hostname;
   let faviconUrl = getFavicon(document, domain);
   const imageUrl = getImage(document, domain, url);
