@@ -87,7 +87,7 @@ export default function LinkCard({ page, onRemove }: Props) {
                 }}
               />
             ) : (
-              <Skeleton.Image className="w-![100px] !h-[100px] md:!h-[140px] md:!w-[200px]" />
+              <Skeleton.Image className="!h-[100px] !w-[100px] md:!h-[140px] md:!w-[200px]" />
             )}
           </div>
         ) : (
