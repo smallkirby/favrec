@@ -10,15 +10,6 @@ type Props = {
   onRemove: (url: string) => void;
 };
 
-const trimString = (str: string, numChars: number) => {
-  const trimmed = str.slice(0, numChars);
-  if (trimmed.length < str.length) {
-    return trimmed + '...';
-  } else {
-    return trimmed;
-  }
-};
-
 export default function LinkCard({ page, onRemove }: Props) {
   return (
     <>
@@ -31,11 +22,25 @@ export default function LinkCard({ page, onRemove }: Props) {
           <div className="h-full pt-4 pb-2 px-3 md:px-4 text-left w-full flex justify-between flex-col">
             <div className="max-h-[75px] overflow-hidden">
               <a href={page.url}>
-                <h3 className="text-xs md:text-lg font-bold mb-2 overflow-hidden">
-                  {trimString(page.title, 40)}
+                <h3
+                  className="text-xs md:text-lg font-bold mb-2 overflow-hidden text-ellipsis"
+                  style={{
+                    display: '-webkit-box',
+                    WebkitLineClamp: 2,
+                    WebkitBoxOrient: 'vertical',
+                  }}
+                >
+                  {page.title}
                 </h3>
               </a>
-              <p className="md:text-sm text-gray-500 overflow-hidden hidden md:block">
+              <p
+                className="text-[0.625rem] md:text-sm text-gray-500 overflow-hidden text-ellipsis"
+                style={{
+                  display: '-webkit-box',
+                  WebkitLineClamp: 1,
+                  WebkitBoxOrient: 'vertical',
+                }}
+              >
                 {page.description}
               </p>
             </div>
