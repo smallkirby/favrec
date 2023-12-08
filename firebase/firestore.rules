@@ -4,8 +4,8 @@ service cloud.firestore {
   match /databases/{database}/documents {
 
     match /users/{userId}/favs/{favId} {
-      allow read, create: if doesUserOwn(request.auth.uid, userId);
-      allow update, delete: if false;
+      allow read, delete: if doesUserOwn(request.auth.uid, userId);
+      allow create, update: if false;
     }
 
     // Default
