@@ -16,7 +16,7 @@ export default function LinkCard({ page, onRemove }: Props) {
     <>
       <div
         className="flex-grow border-[1px] border-gray-300 drop-shadow-md rounded-lg justify-between overflow-hidden
-            p-0 w-full min-h-[128px] max-w-5xl cursor-pointer cursor-pointer
+            p-0 w-full min-h-[128px] max-w-5xl cursor-pointer text-left
             flex content-between hover:shadow-lg duration-300 items-stretch"
       >
         {page ? (
@@ -29,7 +29,7 @@ export default function LinkCard({ page, onRemove }: Props) {
             <p className="text-xs md:text-sm text-gray-500 overflow-hidden">
               {page.description}
             </p>
-            <div className="mt-3 flex justify-between flex-col md:flex-row items-center">
+            <div className="mt-3 flex justify-between flex-col md:flex-row text-left">
               <div className="flex items-center">
                 <Image
                   src={page.faviconUrl ?? ''}
@@ -40,7 +40,7 @@ export default function LinkCard({ page, onRemove }: Props) {
                 />
                 <span className="text-xs md:text-sm">{page.domain}</span>
               </div>
-              <div>
+              <div className="items-left">
                 <span className="text-xs text-gray-400 mr-1">
                   Recorded at {dayjs(page.date).format('YYYY/MM/DD')}
                 </span>
