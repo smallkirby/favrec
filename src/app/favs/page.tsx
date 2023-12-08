@@ -2,9 +2,9 @@
 
 import LinkCard from '@/components/record/LinkCard';
 import { FirebaseAuthContext } from '@/lib/firebase/auth';
-import { getAllFavs, getNumFavs } from '@/lib/firebase/store';
+import { deleteFav, getAllFavs, getNumFavs } from '@/lib/firebase/store';
 import { FavRecord } from '@/types/FavRecord';
-import { Pagination, Spin } from 'antd';
+import { Pagination, Spin, message } from 'antd';
 import { useRouter } from 'next/navigation';
 import { useContext, useEffect, useState } from 'react';
 const perPage = 50;
@@ -16,9 +16,30 @@ export default function FavsPage() {
   const [records, setRecords] = useState<FavRecord[]>([]);
   const [allRecords, setAllRecords] = useState<FavRecord[]>([]);
   const router = useRouter();
+  const [messageApi, contextHolder] = message.useMessage();
 
   const onPageChange = (page: number, _: number) => {
     setPageNum(page);
+  };
+
+  const onRemove = async (url: string) => {
+    const key = 'remove';
+    if (user) {
+      messageApi.open({
+        key,
+        type: 'loading',
+        content: 'Removing your fav...',
+        duration: 0,
+      });
+      await deleteFav(user, url);
+
+      messageApi.open({
+        key,
+        type: 'success',
+        content: 'Removed successfully.',
+      });
+      setAllRecords(allRecords.filter((record) => record.url !== url));
+    }
   };
 
   useEffect(() => {
@@ -36,11 +57,13 @@ export default function FavsPage() {
 
   useEffect(() => {
     setRecords(allRecords.slice((pageNum - 1) * perPage, pageNum * perPage));
+    setNumTotal(allRecords.length);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pageNum, allRecords]);
 
   return (
     <>
+      {contextHolder}
       <Spin spinning={user === undefined} fullscreen />
 
       {user !== undefined && (
@@ -58,7 +81,7 @@ export default function FavsPage() {
           <div>
             {records.map((record) => (
               <div key={record.url} className="mb-4">
-                <LinkCard page={record} />
+                <LinkCard page={record} onRemove={onRemove} />
               </div>
             ))}
           </div>

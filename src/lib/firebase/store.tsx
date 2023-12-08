@@ -2,7 +2,15 @@ import { store as db, functions } from '@/lib/firebase/app';
 import { FavRecord } from '@/types/FavRecord';
 import { FirebaseUser } from '@/types/FirebaseUser';
 import { FirebaseError } from 'firebase/app';
-import { collection, doc, getDocs, orderBy, query } from 'firebase/firestore';
+import {
+  collection,
+  deleteDoc,
+  doc,
+  getDocs,
+  orderBy,
+  query,
+  where,
+} from 'firebase/firestore';
 import { httpsCallable } from 'firebase/functions';
 
 export class PrettyFirebaseError extends Error {
@@ -69,4 +77,16 @@ export const getAllFavs = async (user: FirebaseUser): Promise<FavRecord[]> => {
       date: data.date.toDate(),
     };
   });
+};
+
+export const deleteFav = async (user: FirebaseUser, url: string) => {
+  const usersRef = collection(db, 'users');
+  const userRef = doc(usersRef, user.uid);
+  const favsRef = collection(userRef, 'favs');
+  const quer = query(favsRef, where('url', '==', url));
+  const docSnap = await getDocs(quer);
+
+  if (docSnap.size !== 0) {
+    await deleteDoc(doc(favsRef, docSnap.docs[0].id));
+  }
 };
