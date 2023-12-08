@@ -3,6 +3,7 @@
 import UserBadge from '@/components/common/UserBadge';
 import { useRouter } from 'next/navigation';
 import FavoriteIcon from '@mui/icons-material/Favorite';
+import HeadMenu from './Menu';
 
 export default function Header() {
   const router = useRouter();
@@ -17,6 +18,10 @@ export default function Header() {
         <h1 className="text-lg mr-1">FAVREC</h1>
         <FavoriteIcon sx={{ width: 20, height: 20 }} className="pb-[1px]" />
       </button>
+
+      <div className="flex-1 ml-8">
+        <HeadMenu />
+      </div>
 
       <UserBadge />
     </header>
