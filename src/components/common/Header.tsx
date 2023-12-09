@@ -9,7 +9,7 @@ export default function Header() {
   const router = useRouter();
 
   return (
-    <header className="navbar px-4 py-2 flex items-center justify-between">
+    <header className="navbar flex items-center justify-between px-4 py-2">
       <button
         className="group flex cursor-pointer items-center border-none py-0
         font-cute text-pink-500 duration-300 hover:text-pink-800 dark:bg-slate-800"
