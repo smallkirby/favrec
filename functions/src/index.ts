@@ -1,6 +1,6 @@
 import * as admin from 'firebase-admin';
 import * as functions from 'firebase-functions';
-import { isAuthed } from './lib/auth';
+import { createCustomToken, isAuthed } from './lib/auth';
 import { fetchPageInfo } from './lib/fetch';
 import { FavRecord } from './types/FavRecord';
 
@@ -135,5 +135,22 @@ export const recordPageInfo = functions
     return {
       err: null,
       data: null, // TODO
+    };
+  });
+
+export const getCustomToken = functions
+  .region('asia-northeast1')
+  .https.onCall(async (_, context): Promise<ResultType> => {
+    if (!isAuthed(context.auth)) {
+      return {
+        err: 'Unauthorized',
+        data: null,
+      };
+    }
+
+    const token = await createCustomToken(context.auth!.uid);
+    return {
+      err: null,
+      data: token,
     };
   });

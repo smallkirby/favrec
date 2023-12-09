@@ -110,3 +110,18 @@ export const deleteFav = async (user: FirebaseUser, url: string) => {
     await deleteDoc(doc(favsRef, docSnap.docs[0].id));
   }
 };
+
+export const getCustomToken = async () => {
+  const callable = httpsCallable(functions, 'getCustomToken');
+  return await callable()
+    .then((res: any) => {
+      if (res.data.err) {
+        return new PrettyFirebaseError(new Error(res.data.err));
+      } else {
+        return res.data.data;
+      }
+    })
+    .catch((err) => {
+      return new PrettyFirebaseError(err);
+    });
+};

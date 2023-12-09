@@ -3,7 +3,7 @@
 import { FirebaseAuthContext } from '@/lib/firebase/auth';
 import { useRouter } from 'next/navigation';
 import { useContext, useEffect, useState } from 'react';
-import { auth } from '@/lib/firebase/app';
+import { getCustomToken } from '@/lib/firebase/store';
 
 export default function ExtensionPage() {
   const user = useContext(FirebaseAuthContext).user;
@@ -19,7 +19,9 @@ export default function ExtensionPage() {
     }
 
     if (user) {
-      auth.currentUser!.getIdToken().then((t) => setToken(t));
+      getCustomToken().then((t) => {
+        setToken(t);
+      });
     }
   }, [user, router]);
 
