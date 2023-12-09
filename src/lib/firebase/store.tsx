@@ -62,9 +62,10 @@ export const updateFav = async (url: string) => {
       if (res.data.err) {
         return new PrettyFirebaseError(new Error(res.data.err));
       } else {
+        const data = res.data.data;
         return {
-          ...res.data.data,
-          date: res.data.data.date, // no need to call toDate()
+          ...data,
+          date: new Date(data.date),
         } as FavRecord;
       }
     })

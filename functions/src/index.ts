@@ -52,7 +52,7 @@ export const updatePageInfo = functions
 
     const record: FavRecord = {
       ...page,
-      date: doc.data()!.date,
+      date: doc.data()!.date.toDate(),
     };
 
     const err = await doc.ref
@@ -68,7 +68,10 @@ export const updatePageInfo = functions
 
     return {
       err: null,
-      data: record,
+      data: {
+        ...record,
+        date: record.date.getTime(),
+      },
     };
   });
 
