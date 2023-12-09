@@ -3,7 +3,7 @@ import axios from 'axios';
 import { JSDOM } from 'jsdom';
 
 axios.defaults.responseType = 'arraybuffer';
-axios.defaults.responseEncoding = 'utf-8';
+axios.defaults.responseEncoding = 'binary';
 
 const complementPathUrl = (url: string, domain: string): string => {
   if (url.startsWith('http')) return url;
@@ -127,6 +127,12 @@ export const fetchPageInfo = async (
     console.error(`Content type is not html (${contentType})`);
     return null;
   }
+
+  let charset = res.headers['content-type'].split('charset=')[1];
+  if (!charset) {
+    charset = 'utf-8';
+  }
+  res.data = Buffer.from(res.data, 'binary').toString(charset);
 
   const { document } = new JSDOM(res.data).window;
   const metaTags = document.getElementsByTagName('meta');
