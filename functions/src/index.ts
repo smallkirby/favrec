@@ -10,7 +10,67 @@ admin.initializeApp(functions.config().firebase);
 
 type ResultType = {
   err: string | null;
+  data: any;
 };
+
+export const updatePageInfo = functions
+  .region('asia-northeast1')
+  .https.onCall(async (data, context): Promise<ResultType> => {
+    if (!isAuthed(context.auth)) {
+      return {
+        err: 'Unauthorized',
+        data: null,
+      };
+    }
+
+    const uid = context.auth!.uid;
+    const { url } = data;
+
+    const favsRefs = firestore()
+      .collection('users')
+      .doc(uid)
+      .collection('favs');
+    const docQuery = favsRefs.where('url', '==', url);
+    const doc = await docQuery.get().then((snapshot) => {
+      if (snapshot.empty) return null;
+      return snapshot.docs[0];
+    });
+    if (doc === null) {
+      return {
+        err: 'Record not found',
+        data: null,
+      };
+    }
+
+    const page = await fetchPageInfo(url);
+    if (!page) {
+      return {
+        err: 'Failed to fetch page',
+        data: null,
+      };
+    }
+
+    const record: FavRecord = {
+      ...page,
+      date: doc.data()!.date,
+    };
+
+    const err = await doc.ref
+      .update(record)
+      .then(() => null)
+      .catch((e) => e);
+    if (err) {
+      return {
+        err: err.message,
+        data: null,
+      };
+    }
+
+    return {
+      err: null,
+      data: record,
+    };
+  });
 
 // NOTE: functions v2 currently has a bug that cannot pass `auth` to `onCall` function.
 // https://github.com/firebase/firebase-tools/issues/5210
@@ -20,17 +80,12 @@ export const recordPageInfo = functions
     if (!isAuthed(context.auth)) {
       return {
         err: 'Unauthorized',
+        data: null,
       };
     }
 
     const uid = context.auth!.uid;
     const { url } = data;
-    const page = await fetchPageInfo(url);
-    if (!page) {
-      return {
-        err: 'Failed to fetch page',
-      };
-    }
 
     const favsRefs = firestore()
       .collection('users')
@@ -43,6 +98,15 @@ export const recordPageInfo = functions
     if (exist) {
       return {
         err: 'Already exists',
+        data: null,
+      };
+    }
+
+    const page = await fetchPageInfo(url);
+    if (!page) {
+      return {
+        err: 'Failed to fetch page',
+        data: null,
       };
     }
 
@@ -61,10 +125,12 @@ export const recordPageInfo = functions
     if (err) {
       return {
         err: err.message,
+        data: null,
       };
     }
 
     return {
       err: null,
+      data: null, // TODO
     };
   });

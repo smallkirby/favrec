@@ -54,6 +54,25 @@ export const recordFav = async (url: string) => {
     });
 };
 
+export const updateFav = async (url: string) => {
+  const callable = httpsCallable(functions, 'updatePageInfo');
+
+  return await callable({ url })
+    .then((res: any) => {
+      if (res.data.err) {
+        return new PrettyFirebaseError(new Error(res.data.err));
+      } else {
+        return {
+          ...res.data.data,
+          date: res.data.data.date, // no need to call toDate()
+        } as FavRecord;
+      }
+    })
+    .catch((err) => {
+      return new PrettyFirebaseError(err);
+    });
+};
+
 export const getNumFavs = async (user: FirebaseUser) => {
   const usersRef = collection(db, 'users');
   const userRef = doc(usersRef, user.uid);

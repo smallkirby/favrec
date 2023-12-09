@@ -2,15 +2,51 @@
 
 import LinkCard from '@/components/record/LinkCard';
 import { FirebaseAuthContext } from '@/lib/firebase/auth';
-import { deleteFav, getAllFavs, getNumFavs } from '@/lib/firebase/store';
+import {
+  deleteFav,
+  getAllFavs,
+  getNumFavs,
+  updateFav,
+} from '@/lib/firebase/store';
 import { FavConfigProvider } from '@/lib/theme';
 import { FavRecord } from '@/types/FavRecord';
-import { Pagination, Spin, message } from 'antd';
+import { Pagination, Spin, Switch, message, Button, Tooltip } from 'antd';
 import { useRouter } from 'next/navigation';
 import { useContext, useEffect, useState } from 'react';
+import { DeleteForever, Update } from '@mui/icons-material';
 const perPage = 50;
 
 type Props = {};
+
+const EditTools = ({
+  page,
+  onRemove,
+  onUpdate,
+}: {
+  page: FavRecord;
+  onRemove: (page: FavRecord) => void;
+  onUpdate: (page: FavRecord) => void;
+}) => {
+  return (
+    <div className="flex flex-col">
+      <Tooltip title="Get and update page information again." className="mb-2">
+        <Button
+          icon={<Update />}
+          shape="circle"
+          onClick={() => onUpdate(page)}
+        />
+      </Tooltip>
+      <Tooltip title="Remove this record.">
+        <Button
+          danger
+          icon={<DeleteForever />}
+          shape="circle"
+          onClick={() => onRemove(page)}
+        />
+      </Tooltip>
+    </div>
+  );
+};
 
 export default function FavListing({}: Props) {
   const [numTotal, setNumTotal] = useState(0);
@@ -20,9 +56,43 @@ export default function FavListing({}: Props) {
   const [allRecords, setAllRecords] = useState<FavRecord[]>([]);
   const router = useRouter();
   const [messageApi, contextHolder] = message.useMessage();
+  const [mode, setMode] = useState<'view' | 'edit'>('view');
 
   const onPageChange = (page: number, _: number) => {
     setPageNum(page);
+  };
+
+  const onUpdate = async (url: string) => {
+    const key = 'update';
+    if (user) {
+      messageApi.open({
+        key,
+        type: 'loading',
+        content: 'Updating your fav...',
+        duration: 0,
+      });
+      const res = await updateFav(url);
+
+      if (res instanceof Error) {
+        messageApi.open({
+          key,
+          type: 'error',
+          content: `Error: ${res.message}`,
+        });
+      } else {
+        messageApi.open({
+          key,
+          type: 'success',
+          content: 'Updated successfully.',
+        });
+        const newRecord = res as FavRecord;
+        setAllRecords(
+          allRecords.map((record) =>
+            record.url === newRecord.url ? newRecord : { ...record }
+          )
+        );
+      }
+    }
   };
 
   const onRemove = async (url: string) => {
@@ -71,7 +141,7 @@ export default function FavListing({}: Props) {
 
       {user !== undefined && (
         <div className="mx-auto w-full text-center md:w-2/3">
-          <div className="sticky top-0 z-50 bg-white py-2 dark:bg-slate-800">
+          <div className="sticky top-0 z-50 flex items-center justify-between bg-white py-2 dark:bg-slate-800">
             <Pagination
               defaultCurrent={pageNum}
               total={numTotal}
@@ -82,11 +152,27 @@ export default function FavListing({}: Props) {
               showSizeChanger={false}
               onChange={onPageChange}
             />
+            <Switch
+              className="ml-2"
+              onChange={(checked) => setMode(checked ? 'edit' : 'view')}
+            />
           </div>
 
           <div>
             {records.map((record) => (
-              <div key={record.url} className="mb-4">
+              <div
+                key={record.title + record.description + record.url}
+                className="mb-4 flex items-center"
+              >
+                <div className="mr-2" hidden={mode === 'view'}>
+                  <EditTools
+                    page={record}
+                    onRemove={(p) => onRemove(p.url)}
+                    onUpdate={(p) => {
+                      onUpdate(p.url);
+                    }}
+                  />
+                </div>
                 <LinkCard page={record} onRemove={onRemove} />
               </div>
             ))}
