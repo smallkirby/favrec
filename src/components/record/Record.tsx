@@ -95,12 +95,12 @@ export default function Record() {
           </Form.Item>
 
           <Form.Item className="text-center">
-            <Button htmlType="submit">
+            <Button htmlType="submit" type="primary">
               <AddCircleOutlineIcon
                 sx={{ width: 20, height: 20 }}
                 className="pb-[1px]"
               />
-              <span className="ml-1">Record</span>
+              <span className="ml-1 font-bold">Record</span>
             </Button>
           </Form.Item>
         </Form>

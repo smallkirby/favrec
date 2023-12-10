@@ -4,6 +4,7 @@ const darkTheme: Partial<ThemeConfig> = {
   algorithm: theme.darkAlgorithm,
   token: {
     colorPrimary: '#ff00ff',
+    colorPrimaryHover: '#ab11ab',
   },
   components: {
     Menu: {
@@ -11,6 +12,9 @@ const darkTheme: Partial<ThemeConfig> = {
     },
     Card: {
       colorBgContainer: '#1f293b',
+    },
+    Button: {
+      primaryColor: '#330033',
     },
   },
 };

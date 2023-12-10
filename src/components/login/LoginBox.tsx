@@ -35,8 +35,13 @@ export default function LoginBox() {
           />
           <div className="mt-2">
             <h1 className="mb-4 text-lg">Sign in with GitHub</h1>
-            <Button className="w-48" loading={isLoading} onClick={onClickLogin}>
-              Login / Signup
+            <Button
+              className="w-48 bg-[#ff00ff]"
+              loading={isLoading}
+              onClick={onClickLogin}
+              type="primary"
+            >
+              <span className="font-bold">Login / Signup</span>
             </Button>
           </div>
         </div>
