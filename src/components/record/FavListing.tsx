@@ -131,9 +131,10 @@ export default function FavListing({}: Props) {
       if (allRecords.length === 0) {
         setAllRecords(new Array(num).fill(null));
       }
+      // Then, fetch actual all records
+      // TODO: It is desirable to fetch num of records and actual records at once in parallel.
+      getAllFavs(user).then((records) => setAllRecords(records));
     });
-    // Then, fetch actual all records
-    getAllFavs(user).then((records) => setAllRecords(records));
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
