@@ -4,6 +4,7 @@ import { FavRecord } from '@/types/FavRecord';
 import { Skeleton } from 'antd';
 import Image from 'next/image';
 import dayjs from 'dayjs';
+import { useState } from 'react';
 
 type Props = {
   page: FavRecord | null;
@@ -11,6 +12,8 @@ type Props = {
 };
 
 export default function LinkCard({ page, onRemove }: Props) {
+  const [imgNotFound, setImgNotFound] = useState(false);
+
   return (
     <>
       <div
@@ -76,7 +79,7 @@ export default function LinkCard({ page, onRemove }: Props) {
 
         {page ? (
           <div className="h-[100px] w-[100px] shrink-0 md:h-[140px] md:w-[200px]">
-            {page.imageUrl ? (
+            {page.imageUrl && !imgNotFound ? (
               <Image
                 src={page.imageUrl}
                 alt={page.title}
@@ -87,6 +90,10 @@ export default function LinkCard({ page, onRemove }: Props) {
                   height: '100%',
                   width: '100%',
                   objectFit: 'cover',
+                }}
+                onError={(e) => {
+                  e.currentTarget.onerror = null;
+                  setImgNotFound(true);
                 }}
               />
             ) : (
