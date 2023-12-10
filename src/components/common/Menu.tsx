@@ -41,7 +41,6 @@ export default function HeadMenu() {
         selectedKeys={[current]}
         items={menuItems}
         mode="horizontal"
-        className="dark:bg-slate-800"
       />
     </FavConfigProvider>
   );

@@ -5,6 +5,14 @@ const darkTheme: Partial<ThemeConfig> = {
   token: {
     colorPrimary: '#ff00ff',
   },
+  components: {
+    Menu: {
+      itemBg: 'transparent',
+    },
+    Card: {
+      colorBgContainer: '#1f293b',
+    },
+  },
 };
 
 export const FavConfigProvider = ({
@@ -12,13 +20,5 @@ export const FavConfigProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  return (
-    <ConfigProvider
-      theme={{
-        ...darkTheme,
-      }}
-    >
-      {children}
-    </ConfigProvider>
-  );
+  return <ConfigProvider theme={darkTheme}>{children}</ConfigProvider>;
 };

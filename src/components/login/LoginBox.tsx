@@ -26,7 +26,7 @@ export default function LoginBox() {
 
   return (
     <FavConfigProvider>
-      <Card className="mx-4 text-center dark:border-slate-500 dark:bg-slate-800 md:mx-auto md:w-96">
+      <Card className="!mx-auto !border-slate-600 text-center shadow-sm drop-shadow-md md:mx-auto md:w-96">
         <div className="my-2">
           <Image
             src="https://github.githubassets.com/images/modules/logos_page/Octocat.png"
