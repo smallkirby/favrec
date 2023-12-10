@@ -15,6 +15,10 @@ type ResultType = {
 
 export const updatePageInfo = functions
   .region('asia-northeast1')
+  .runWith({
+    memory: '1GB',
+    minInstances: 2,
+  })
   .https.onCall(async (data, context): Promise<ResultType> => {
     if (!isAuthed(context.auth)) {
       return {
@@ -79,6 +83,10 @@ export const updatePageInfo = functions
 // https://github.com/firebase/firebase-tools/issues/5210
 export const recordPageInfo = functions
   .region('asia-northeast1')
+  .runWith({
+    memory: '1GB',
+    minInstances: 2,
+  })
   .https.onCall(async (data, context): Promise<ResultType> => {
     if (!isAuthed(context.auth)) {
       return {
