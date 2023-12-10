@@ -57,6 +57,7 @@ export default function FavListing({}: Props) {
   const router = useRouter();
   const [messageApi, contextHolder] = message.useMessage();
   const [mode, setMode] = useState<'view' | 'edit'>('view');
+  const [countFetched, setCountFetched] = useState(false);
 
   const onPageChange = (page: number, _: number) => {
     setPageNum(page);
@@ -123,8 +124,17 @@ export default function FavListing({}: Props) {
       return;
     }
 
-    getNumFavs(user).then((num) => setNumTotal(num));
+    // First, fetch only the number of records and set skeltons for them
+    getNumFavs(user).then((num) => {
+      setNumTotal(num);
+      setCountFetched(true);
+      if (allRecords.length === 0) {
+        setAllRecords(new Array(num).fill(null));
+      }
+    });
+    // Then, fetch actual all records
     getAllFavs(user).then((records) => setAllRecords(records));
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
@@ -137,7 +147,7 @@ export default function FavListing({}: Props) {
   return (
     <FavConfigProvider>
       {contextHolder}
-      <Spin spinning={user === undefined} fullscreen />
+      <Spin spinning={!countFetched} fullscreen />
 
       {user !== undefined && (
         <div className="mx-auto w-full text-center md:w-2/3">
@@ -159,9 +169,9 @@ export default function FavListing({}: Props) {
           </div>
 
           <div>
-            {records.map((record) => (
+            {records.map((record, ix) => (
               <div
-                key={record.title + record.description + record.url}
+                key={record ? record.url : ix}
                 className="mb-4 flex items-center"
               >
                 <div className="mr-2" hidden={mode === 'view'}>

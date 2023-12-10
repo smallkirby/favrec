@@ -72,7 +72,7 @@ export default function LinkCard({ page, onRemove }: Props) {
             </div>
           </div>
         ) : (
-          <div className="h-4/5 flex-1 overflow-hidden px-8 py-4">
+          <div className="h-4/5 flex-1 overflow-hidden px-8 py-5">
             <Skeleton active />
           </div>
         )}
@@ -103,8 +103,8 @@ export default function LinkCard({ page, onRemove }: Props) {
         ) : (
           <Skeleton.Image
             active={true}
-            style={{ height: '100%', width: '158px' }}
-            className="md:w-![158px] h-[100px] !w-[100px] md:h-[140px]"
+            style={{ height: '100%', width: '100px' }}
+            className="!h-[100px] !w-[100px] md:!h-[140px] md:!w-[200px]"
           />
         )}
       </div>
