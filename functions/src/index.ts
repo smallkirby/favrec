@@ -17,7 +17,6 @@ export const updatePageInfo = functions
   .region('asia-northeast1')
   .runWith({
     memory: '1GB',
-    minInstances: 2,
   })
   .https.onCall(async (data, context): Promise<ResultType> => {
     if (!isAuthed(context.auth)) {
@@ -85,7 +84,6 @@ export const recordPageInfo = functions
   .region('asia-northeast1')
   .runWith({
     memory: '1GB',
-    minInstances: 2,
   })
   .https.onCall(async (data, context): Promise<ResultType> => {
     if (!isAuthed(context.auth)) {
