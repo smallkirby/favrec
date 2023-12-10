@@ -39,6 +39,7 @@ export default function UserBadge() {
                 <Spin size="large" />
               ) : (
                 <Avatar
+                  className="cursor-pointer"
                   size={40}
                   icon={
                     user && user.photoUrl ? (
