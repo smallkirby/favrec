@@ -1,18 +1,20 @@
 'use client';
 
 import { auth } from '@/lib/firebase/app';
+import { FirebaseAuthContext } from '@/lib/firebase/auth';
 import { FavConfigProvider } from '@/lib/theme';
-import { Button, Card, Image } from 'antd';
+import { Button, Card, Image, Spin } from 'antd';
 import {
   GithubAuthProvider,
   signInWithPopup,
   signInWithRedirect,
 } from 'firebase/auth';
-import { useCallback, useState } from 'react';
+import { useCallback, useContext, useState } from 'react';
 import { isMobile } from 'react-device-detect';
 
 export default function LoginBox() {
   const [isLoading, setLoading] = useState(false);
+  const user = useContext(FirebaseAuthContext).user;
 
   const onClickLogin = useCallback(async () => {
     setLoading(true);
@@ -26,6 +28,7 @@ export default function LoginBox() {
 
   return (
     <FavConfigProvider>
+      <Spin spinning={isLoading || user === undefined} fullscreen />
       <Card className="!mx-auto !border-slate-600 text-center shadow-sm drop-shadow-md md:mx-auto md:w-96">
         <div className="my-2">
           <Image
