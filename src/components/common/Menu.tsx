@@ -41,6 +41,7 @@ export default function HeadMenu() {
         selectedKeys={[current]}
         items={menuItems}
         mode="horizontal"
+        className="justify-center md:justify-start"
       />
     </FavConfigProvider>
   );

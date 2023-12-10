@@ -30,7 +30,7 @@ export default function Header() {
         <UserBadge />
       </div>
 
-      <div className="md:hidden">
+      <div className="mx-4 md:hidden">
         <HeadMenu />
       </div>
     </header>
