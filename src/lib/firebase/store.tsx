@@ -6,6 +6,7 @@ import {
   collection,
   deleteDoc,
   doc,
+  getCountFromServer,
   getDocs,
   orderBy,
   query,
@@ -79,8 +80,8 @@ export const getNumFavs = async (user: FirebaseUser) => {
   const userRef = doc(usersRef, user.uid);
   const favsRef = collection(userRef, 'favs');
 
-  const favsSnap = await getDocs(favsRef);
-  return favsSnap.size;
+  const favsSnap = await getCountFromServer(favsRef);
+  return favsSnap.data().count;
 };
 
 export const getAllFavs = async (user: FirebaseUser): Promise<FavRecord[]> => {
