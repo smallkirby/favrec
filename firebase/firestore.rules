@@ -3,15 +3,33 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
+    // Records
+
     match /users/{userId}/favs/{favId} {
       allow read, delete: if doesUserOwn(request.auth.uid, userId);
       allow create, update: if false;
+    }
+
+    // Settings
+
+    match /users/{userId}/settings/integrations {
+      allow write, read: if false;
+    }
+
+    match /users/{userId}/settings/general {
+      allow read, write: if doesUserOwn(request.auth.uid, userId);
+    }
+
+    match /users/{userId}/settings/{settingId} {
+      allow read, write: if false;
     }
 
     // Default
     match /{document=**} {
       allow read, write: if false;
     }
+
+    // Utils
 
     function doesUserOwn(incomingUid, targetUid) {
       return incomingUid == targetUid;

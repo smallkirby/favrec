@@ -7,6 +7,7 @@ import { Settings } from '@/types/Settings';
 import { Button, Checkbox, Collapse, Form, Input, Switch, message } from 'antd';
 import { useForm } from 'antd/es/form/Form';
 import { useEffect, useState } from 'react';
+import WarningIcon from '@mui/icons-material/Warning';
 
 type Props = {
   user: FirebaseUser;
@@ -201,6 +202,30 @@ export default function BskySettings({ user, settings }: Props) {
             <p className="ml-6 text-sm text-slate-500">
               Enabling this will post the weekly summary to Bluesky.
             </p>
+          </div>
+
+          <div className="m-3 rounded-lg border-[1px] border-red-500 p-2 text-red-500">
+            <h4 className="flex items-center text-lg">
+              <WarningIcon className="mr-1" />
+              <span>Warning</span>
+            </h4>
+            <div className="p-2 text-xs text-red-400">
+              <p>
+                Your username and app password is stored in the database in
+                plaintext if you register them here. You can delete your
+                username and app password by pressing the DELETE button. You can
+                revoke the app password in{' '}
+                <a href="https://bsky.app/settings" className="underline">
+                  Bluesky Settings
+                </a>{' '}
+                page. This website is not responsible for anything including any
+                data breach that may occur.
+              </p>
+              <p>
+                By pressing the update button below, you are consenting to the
+                precautions.
+              </p>
+            </div>
           </div>
 
           <BskyAccountPanel
