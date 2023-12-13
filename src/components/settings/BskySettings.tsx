@@ -250,7 +250,10 @@ export default function BskySettings({ user, settings }: Props) {
                 plaintext if you register them here. You can delete your
                 username and app password by pressing the DELETE button. You can
                 revoke the app password in{' '}
-                <a href="https://bsky.app/settings" className="underline">
+                <a
+                  href="https://bsky.app/settings/app-passwords"
+                  className="underline"
+                >
                   Bluesky Settings
                 </a>{' '}
                 page. This website is not responsible for anything including any
