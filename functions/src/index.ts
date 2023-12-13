@@ -164,4 +164,4 @@ export const getCustomToken = functions
     };
   });
 
-export { updateBskyAccount } from './lib/bsky';
+export { updateBskyAccount, deleteBskyAccount } from './lib/bsky';

@@ -1,6 +1,10 @@
 'use client';
 
-import { updateBskyAccount, updateGeneralSettings } from '@/lib/firebase/store';
+import {
+  deleteBskyAccount,
+  updateBskyAccount,
+  updateGeneralSettings,
+} from '@/lib/firebase/store';
 import { FavConfigProvider } from '@/lib/theme';
 import { FirebaseUser } from '@/types/FirebaseUser';
 import { Settings } from '@/types/Settings';
@@ -140,6 +144,35 @@ export default function BskySettings({ user, settings }: Props) {
   const [postSummary, setPostSummary] = useState(
     settings.bskyPostSummary === true
   );
+  const [removingAccount, setRemovingAccount] = useState(false);
+  const [messageApi, contextHolder] = message.useMessage();
+
+  const onRemoveAccount = async () => {
+    setRemovingAccount(true);
+    messageApi.open({
+      content: 'Removing Bluesky account...',
+      key: 'removeBskyAccount',
+      type: 'loading',
+      duration: 0,
+    });
+
+    deleteBskyAccount(user).then((res) => {
+      if (res instanceof Error) {
+        messageApi.error({
+          key: 'removeBskyAccount',
+          content: `Error: ${res.message}`,
+        });
+      } else {
+        messageApi.success({
+          key: 'removeBskyAccount',
+          content: 'Removed Bluesky account.',
+          duration: 2,
+        });
+      }
+
+      setRemovingAccount(false);
+    });
+  };
 
   useEffect(() => {
     updateGeneralSettings(user, {
@@ -156,6 +189,8 @@ export default function BskySettings({ user, settings }: Props) {
   return (
     <>
       <FavConfigProvider>
+        {contextHolder}
+
         <div className="mb-3 flex items-center">
           <h2 className="mb-1 mr-4 text-2xl font-bold">Bluesky Integration</h2>
           <Switch
@@ -235,6 +270,18 @@ export default function BskySettings({ user, settings }: Props) {
           />
         </div>
       </FavConfigProvider>
+
+      <div className="my-4 flex">
+        <Button
+          danger
+          className="mx-auto border-blue-300 font-bold text-yellow-500"
+          disabled={!settings.bskyUsername}
+          loading={removingAccount}
+          onClick={onRemoveAccount}
+        >
+          Delete Bluesky account from database
+        </Button>
+      </div>
     </>
   );
 }

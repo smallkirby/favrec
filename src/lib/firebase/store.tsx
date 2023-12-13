@@ -6,6 +6,7 @@ import { FirebaseError } from 'firebase/app';
 import {
   collection,
   deleteDoc,
+  deleteField,
   doc,
   getCountFromServer,
   getDoc,
@@ -199,4 +200,33 @@ export const updateGeneralSettings = async (
         return new PrettyFirebaseError(err);
       });
   }
+};
+
+export const deleteBskyAccount = async (user: FirebaseUser) => {
+  const callable = httpsCallable(functions, 'deleteBskyAccount');
+  const res = await callable()
+    .then((res: any) => {
+      if (res.data.err) {
+        return new PrettyFirebaseError(new Error(res.data.err));
+      } else {
+        return null;
+      }
+    })
+    .catch((err) => {
+      return new PrettyFirebaseError(err);
+    });
+
+  if (res != null) return res;
+
+  const usersRef = collection(db, 'users');
+  const userRef = doc(usersRef, user.uid);
+  const settingsRef = collection(userRef, 'settings');
+  const generalSettingsRef = doc(settingsRef, 'general');
+  return await updateDoc(generalSettingsRef, {
+    bskyUsername: deleteField(),
+  })
+    .then(() => null)
+    .catch((err) => {
+      return new PrettyFirebaseError(err);
+    });
 };

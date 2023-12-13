@@ -1,6 +1,7 @@
 import { BskyAgent } from '@atproto/api';
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
+import { FieldValue } from 'firebase-admin/firestore';
 import { isAuthed } from './auth';
 
 export const checkAccountLogin = async (
@@ -99,5 +100,44 @@ export const updateBskyAccount = functions
           data: null,
         };
       }
+    }
+  });
+
+export const deleteBskyAccount = functions
+  .region('asia-northeast1')
+  .runWith({
+    memory: '1GB',
+  })
+  .https.onCall(async (data, context) => {
+    if (!isAuthed(context.auth)) {
+      return {
+        err: 'Unauthorized',
+        data: null,
+      };
+    }
+
+    const db = admin.firestore;
+    const settingsRefs = db()
+      .collection('users')
+      .doc(context.auth!.uid)
+      .collection('settings');
+    const integRefs = settingsRefs.doc('integrations');
+    const err = await integRefs
+      .update({
+        bskyAppPassword: FieldValue.delete(),
+      })
+      .then(() => null)
+      .catch((e) => e);
+
+    if (err) {
+      return {
+        err: 'Failed to delete app password',
+        data: null,
+      };
+    } else {
+      return {
+        err: null,
+        data: null,
+      };
     }
   });
