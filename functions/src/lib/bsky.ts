@@ -1,13 +1,12 @@
-import { BskyAgent } from '@atproto/api';
+import { BskyAgent, RichText } from '@atproto/api';
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 import { FieldValue } from 'firebase-admin/firestore';
 import { isAuthed } from './auth';
+import ogs from 'open-graph-scraper';
+import sharp from 'sharp';
 
-export const checkAccountLogin = async (
-  username: string,
-  appPassword: string
-) => {
+const checkAccountLogin = async (username: string, appPassword: string) => {
   const agent = new BskyAgent({
     service: 'https://bsky.social',
   });
@@ -21,6 +20,70 @@ export const checkAccountLogin = async (
   } catch (e) {
     return false;
   }
+};
+
+const canPostRecord = async (uid: string): Promise<boolean> => {
+  const db = admin.firestore;
+  const settingsRefs = db().collection('users').doc(uid).collection('settings');
+  const generalRefs = settingsRefs.doc('general');
+  const generalSnap = await generalRefs.get();
+
+  const general = generalSnap.data();
+  return general && general.bskyUsername && general.bskyPostRecords;
+};
+
+const getBskyCredential = async (
+  uid: string
+): Promise<{
+  username: string;
+  password: string;
+}> => {
+  const db = admin.firestore;
+  const settingsRefs = db().collection('users').doc(uid).collection('settings');
+  const integRefs = settingsRefs.doc('integrations');
+  const integSnap = await integRefs.get();
+
+  const integ = integSnap.data();
+  if (!integ || !integ.bskyAppPassword) {
+    throw new Error('No Bsky app password');
+  }
+  const passdowd = integ.bskyAppPassword;
+
+  const generalRefs = settingsRefs.doc('general');
+  const generalSnap = await generalRefs.get();
+  const general = generalSnap.data();
+  if (!general || !general.bskyUsername) {
+    throw new Error('No Bsky username');
+  }
+  const username = general.bskyUsername;
+
+  return { username, password: passdowd };
+};
+
+const getOgImageFromUrl = async (url: string) => {
+  const options = { url: url };
+  const { result } = await ogs(options);
+  const res = await fetch(result.ogImage?.at(0)?.url || '');
+
+  const buffer = await res.arrayBuffer();
+  const compressedImage = await sharp(buffer)
+    .resize(800, null, {
+      fit: 'inside',
+      withoutEnlargement: true,
+    })
+    .jpeg({
+      quality: 80,
+      progressive: true,
+    })
+    .toBuffer();
+
+  return {
+    url: result.ogImage?.at(0)?.url || '',
+    type: result.ogImage?.at(0)?.type || '',
+    description: result.ogDescription || '',
+    title: result.ogTitle || '',
+    uint8Array: new Uint8Array(compressedImage),
+  };
 };
 
 const registerPrifileFirestore = async (
@@ -140,4 +203,61 @@ export const deleteBskyAccount = functions
         data: null,
       };
     }
+  });
+
+export const onPostRecordBsky = functions.firestore
+  .document('users/{uid}/favs/{fid}')
+  .onCreate(async (snap, context) => {
+    if (!(await canPostRecord(context.params.uid))) {
+      return null;
+    }
+
+    const { username, password } = await getBskyCredential(context.params.uid);
+
+    const record = snap.data();
+    if (!record) {
+      return;
+    }
+
+    const agent = new BskyAgent({
+      service: 'https://bsky.social',
+    });
+    await agent.login({
+      identifier: username,
+      password,
+    });
+
+    const image = await getOgImageFromUrl(record.url);
+    const imageRes = await agent.uploadBlob(image.uint8Array, {
+      encoding: 'image/jpeg',
+    });
+
+    const rt = new RichText({ text: `I'm reading ${record.url}` });
+    await rt.detectFacets(agent);
+    const post = {
+      $type: 'app.bsky.feed.post',
+      text: rt.text,
+      facets: rt.facets,
+      createdAt: new Date().toISOString(),
+      embed: {
+        $type: 'app.bsky.embed.external',
+        external: {
+          uri: record.url,
+          title: record.title,
+          description: record.description,
+          thumb: {
+            $type: 'blob',
+            ref: {
+              $link: imageRes.data.blob.ref.toString(),
+            },
+            mimeType: imageRes.data.blob.mimeType,
+            size: imageRes.data.blob.size,
+          },
+        },
+      },
+    };
+
+    await agent.post(post);
+
+    return null;
   });
