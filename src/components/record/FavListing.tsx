@@ -164,7 +164,7 @@ export default function FavListing({}: Props) {
               onChange={onPageChange}
             />
             <Switch
-              className="ml-2"
+              className="ml-2 bg-slate-600"
               onChange={(checked) => setMode(checked ? 'edit' : 'view')}
             />
           </div>

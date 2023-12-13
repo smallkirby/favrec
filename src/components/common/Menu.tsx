@@ -1,4 +1,8 @@
-import { EmergencyRecording, FormatListBulleted } from '@mui/icons-material';
+import {
+  EmergencyRecording,
+  FormatListBulleted,
+  Settings,
+} from '@mui/icons-material';
 import { useState } from 'react';
 import { Menu, MenuProps } from 'antd';
 import { usePathname } from 'next/navigation';
@@ -15,6 +19,11 @@ const menuItems: MenuProps['items'] = [
     key: 'list',
     icon: <FormatListBulleted />,
   },
+  {
+    label: <a href="/settings">Settings</a>,
+    key: 'settings',
+    icon: <Settings />,
+  },
 ];
 
 const getSelectedKey = (pathname: string) => {
@@ -25,6 +34,8 @@ const getSelectedKey = (pathname: string) => {
       return 'record';
     case 'favs':
       return 'list';
+    case 'settings':
+      return 'settings';
     default:
       return '';
   }

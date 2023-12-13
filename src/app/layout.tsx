@@ -22,7 +22,7 @@ export default function RootLayout({
           <FirebaseAuthProvider>
             <body className="flex min-h-screen flex-col dark:bg-slate-800 dark:text-slate-300">
               <Header />
-              <div className="mx-1 mb-8 flex-1 px-2 md:mx-auto md:w-2/3">
+              <div className="mx-1 mb-8 mt-4 flex-1 px-2 md:mx-auto md:w-2/3">
                 {children}
               </div>
             </body>

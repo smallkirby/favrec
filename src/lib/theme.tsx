@@ -16,6 +16,10 @@ const darkTheme: Partial<ThemeConfig> = {
     Button: {
       primaryColor: '#330033',
     },
+    Collapse: {
+      contentBg: 'transparent',
+      colorBorder: '#475569',
+    },
   },
 };
 
