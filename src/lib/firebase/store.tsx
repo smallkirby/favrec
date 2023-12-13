@@ -1,4 +1,5 @@
 import { store as db, functions } from '@/lib/firebase/app';
+import { Settings } from '@/types/Settings';
 import { FavRecord } from '@/types/FavRecord';
 import { FirebaseUser } from '@/types/FirebaseUser';
 import { FirebaseError } from 'firebase/app';
@@ -7,9 +8,12 @@ import {
   deleteDoc,
   doc,
   getCountFromServer,
+  getDoc,
   getDocs,
   orderBy,
   query,
+  setDoc,
+  updateDoc,
   where,
 } from 'firebase/firestore';
 import { httpsCallable } from 'firebase/functions';
@@ -125,4 +129,74 @@ export const getCustomToken = async () => {
     .catch((err) => {
       return new PrettyFirebaseError(err);
     });
+};
+
+export const updateBskyAccount = async (
+  username: string,
+  appPassword: string
+) => {
+  const callable = httpsCallable(functions, 'updateBskyAccount');
+  return await callable({ username, appPassword })
+    .then((res: any) => {
+      if (res.data.err) {
+        return new PrettyFirebaseError(new Error(res.data.err));
+      } else {
+        return null;
+      }
+    })
+    .catch((err) => {
+      return new PrettyFirebaseError(err);
+    });
+};
+
+export const getGeneralSettings = async (
+  user: FirebaseUser
+): Promise<Settings | PrettyFirebaseError> => {
+  const usersRef = collection(db, 'users');
+  const userRef = doc(usersRef, user.uid);
+  const settingsRef = collection(userRef, 'settings');
+  const generalSettingsRef = doc(settingsRef, 'general');
+  return await getDoc(generalSettingsRef)
+    .then((docSnap) => {
+      if (docSnap.exists()) {
+        return docSnap.data() as Settings;
+      } else {
+        return {
+          bskyEnabled: false,
+          bskyUsername: null,
+          bskyPostSummary: false,
+          bskyPostRecords: false,
+        };
+      }
+    })
+    .catch((err) => {
+      return new PrettyFirebaseError(err);
+    });
+};
+
+export const updateGeneralSettings = async (
+  user: FirebaseUser,
+  obj: Record<string, any>
+): Promise<null | PrettyFirebaseError> => {
+  const usersRef = collection(db, 'users');
+  const userRef = doc(usersRef, user.uid);
+  const settingsRef = collection(userRef, 'settings');
+  const generalSettingsRef = doc(settingsRef, 'general');
+  if ((await getDoc(generalSettingsRef)).exists()) {
+    return await updateDoc(generalSettingsRef, obj)
+      .then(() => {
+        return null;
+      })
+      .catch((err) => {
+        return new PrettyFirebaseError(err);
+      });
+  } else {
+    return await setDoc(generalSettingsRef, obj)
+      .then(() => {
+        return null;
+      })
+      .catch((err) => {
+        return new PrettyFirebaseError(err);
+      });
+  }
 };

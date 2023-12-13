@@ -14,6 +14,7 @@
   },
   "main": "lib/index.js",
   "dependencies": {
+    "@atproto/api": "^0.7.3",
     "@types/jsdom": "^21.1.6",
     "axios": "^1.6.2",
     "dayjs": "^1.11.10",

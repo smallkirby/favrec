@@ -146,6 +146,9 @@ export const recordPageInfo = functions
 
 export const getCustomToken = functions
   .region('asia-northeast1')
+  .runWith({
+    memory: '1GB',
+  })
   .https.onCall(async (_, context): Promise<ResultType> => {
     if (!isAuthed(context.auth)) {
       return {
@@ -160,3 +163,5 @@ export const getCustomToken = functions
       data: token,
     };
   });
+
+export { updateBskyAccount } from './lib/bsky';
