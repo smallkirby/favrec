@@ -20,8 +20,8 @@ export default function LinkCard({ page, onRemove }: Props) {
         <div
           className="flex h-[100px] max-w-5xl cursor-pointer
             content-between justify-between
-            overflow-hidden rounded-lg border-[1px] border-slate-600 p-0 text-left
-            drop-shadow-md duration-300 hover:shadow-lg md:h-[140px]"
+            overflow-hidden rounded-lg border-[1px] border-slate-600 p-0 text-left drop-shadow-md
+            duration-300 hover:border-slate-500 hover:bg-slate-700 hover:shadow-lg md:h-[140px]"
         >
           {page ? (
             <div
