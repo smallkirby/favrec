@@ -152,7 +152,7 @@ export default function FavListing({}: Props) {
 
       {user !== undefined && (
         <div className="mx-auto w-full text-center md:w-2/3">
-          <div className="sticky top-0 z-50 flex items-center justify-between bg-white py-2 dark:bg-slate-800">
+          <div className="sticky top-0 z-50 flex items-center justify-between bg-slate-800 py-2">
             <Pagination
               defaultCurrent={pageNum}
               total={numTotal}

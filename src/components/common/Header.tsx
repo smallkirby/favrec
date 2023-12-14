@@ -13,8 +13,8 @@ export default function Header() {
       <div className="flex items-center justify-between px-4 pt-2">
         <a href="/">
           <button
-            className="group flex cursor-pointer items-center border-none py-0
-        font-cute text-pink-500 duration-300 hover:text-pink-800 dark:bg-slate-800"
+            className="group flex cursor-pointer items-center border-none bg-slate-800
+            py-0 font-cute text-pink-500 duration-300 hover:text-pink-800"
             onClick={() => router.push('/')}
           >
             <h1 className="mr-1 text-lg">FAVREC</h1>

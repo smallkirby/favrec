@@ -16,12 +16,12 @@ export default function LinkCard({ page, onRemove }: Props) {
 
   return (
     <>
-      <a href={page?.url} target="_blank" className="w-full ">
+      <a href={page?.url} target="_blank" className="w-full">
         <div
           className="flex h-[100px] max-w-5xl cursor-pointer
             content-between justify-between
-            overflow-hidden rounded-lg border-[1px] border-gray-300 p-0 text-left drop-shadow-md
-            duration-300 hover:shadow-lg dark:border-slate-600 md:h-[140px]"
+            overflow-hidden rounded-lg border-[1px] border-slate-600 p-0 text-left
+            drop-shadow-md duration-300 hover:shadow-lg md:h-[140px]"
         >
           {page ? (
             <div
@@ -59,7 +59,7 @@ export default function LinkCard({ page, onRemove }: Props) {
                     height={16}
                     className="mr-1 h-[14px] w-[14px]"
                   />
-                  <span className="dark:text-gray-400 md:text-sm">
+                  <span className="text-gray-400 md:text-sm">
                     {page.domain}
                   </span>
                 </div>

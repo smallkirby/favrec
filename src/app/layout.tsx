@@ -19,18 +19,18 @@ export default function RootLayout({
   return (
     <html lang="en">
       <StyledComponentsRegistry>
-        <SettingsProvider>
-          <FavConfigProvider>
+        <FavConfigProvider>
+          <SettingsProvider>
             <FirebaseAuthProvider>
-              <body className="flex min-h-screen flex-col dark:bg-slate-800 dark:text-slate-300">
+              <body className="flex min-h-screen flex-col bg-slate-800 text-slate-300">
                 <Header />
                 <div className="mx-1 mb-8 mt-4 flex-1 px-2 md:mx-auto md:w-2/3">
                   {children}
                 </div>
               </body>
             </FirebaseAuthProvider>
-          </FavConfigProvider>
-        </SettingsProvider>
+          </SettingsProvider>
+        </FavConfigProvider>
       </StyledComponentsRegistry>
     </html>
   );
