@@ -79,7 +79,7 @@ export default function LinkCard({ page, onRemove }: Props) {
           {page ? (
             <div className="h-[100px] w-[100px] shrink-0 md:h-[140px] md:w-[200px]">
               {page.imageUrl && !imgNotFound ? (
-                <Image
+                <img
                   src={page.imageUrl}
                   alt={page.title}
                   className="rounded-r-lg"
