@@ -9,6 +9,41 @@ import type { Metadata } from 'next';
 export const metadata: Metadata = {
   title: 'FavRec',
   description: 'Record your favorites and remember them forever.',
+  applicationName: 'FavRec',
+  authors: [
+    {
+      name: 'smallkirby',
+      url: 'https://smallkirby.com',
+    },
+  ],
+  metadataBase: new URL('https://fav.smallkirby.com'),
+  openGraph: {
+    title: 'FavRec',
+    description: 'Record your favorites and remember them forever.',
+    type: 'website',
+    url: 'https://fav.smallkirby.com',
+    images: [
+      {
+        url: 'img/favrec-og.png',
+        alt: 'FavRec',
+        width: 597,
+        height: 222,
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    site: '@smallkirby',
+    creator: '@smallkirby',
+    title: 'FavRec',
+    description: 'Record your favorites and remember them forever.',
+    images: {
+      url: 'img/favrec-og.png',
+      alt: 'FavRec',
+      width: 597,
+      height: 222,
+    },
+  },
 };
 
 export default function RootLayout({
