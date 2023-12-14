@@ -60,10 +60,27 @@ const getBskyCredential = async (
   return { username, password: passdowd };
 };
 
-const getOgImageFromUrl = async (url: string) => {
+type OgImage = {
+  url: string;
+  type: string;
+  description: string;
+  title: string;
+  uint8Array: Uint8Array;
+};
+
+const getOgImageFromUrl = async (
+  url: string,
+  fallbackImgurl: string | null
+): Promise<OgImage | null> => {
   const options = { url: url };
   const { result } = await ogs(options);
-  const res = await fetch(result.ogImage?.at(0)?.url || '');
+  if (
+    (result.ogImage === undefined || result.ogImage.length === 0) &&
+    fallbackImgurl === null
+  ) {
+    return null;
+  }
+  const res = await fetch(result.ogImage?.at(0)?.url || fallbackImgurl!);
 
   const buffer = await res.arrayBuffer();
   const compressedImage = await sharp(buffer)
@@ -227,14 +244,12 @@ export const onPostRecordBsky = functions.firestore
       password,
     });
 
-    const image = await getOgImageFromUrl(record.url);
-    const imageRes = await agent.uploadBlob(image.uint8Array, {
-      encoding: 'image/jpeg',
-    });
+    const image = await getOgImageFromUrl(record.url, record.imageUrl);
 
     const rt = new RichText({ text: `I'm reading ${record.url}` });
     await rt.detectFacets(agent);
-    const post = {
+
+    const postRecord = {
       $type: 'app.bsky.feed.post',
       text: rt.text,
       facets: rt.facets,
@@ -245,19 +260,26 @@ export const onPostRecordBsky = functions.firestore
           uri: record.url,
           title: record.title,
           description: record.description,
-          thumb: {
-            $type: 'blob',
-            ref: {
-              $link: imageRes.data.blob.ref.toString(),
-            },
-            mimeType: imageRes.data.blob.mimeType,
-            size: imageRes.data.blob.size,
-          },
         },
       },
     };
+    if (image !== null) {
+      const imageBlob = await agent.uploadBlob(image.uint8Array, {
+        encoding: 'image/jpeg',
+      });
+      Object.assign(postRecord.embed.external, {
+        thumb: {
+          $type: 'blob',
+          ref: {
+            $link: imageBlob.data.blob.ref.toString(),
+          },
+          mimeType: imageBlob.data.blob.mimeType,
+          size: imageBlob.data.blob.size,
+        },
+      });
+    }
 
-    await agent.post(post);
+    await agent.post(postRecord);
 
     return null;
   });
