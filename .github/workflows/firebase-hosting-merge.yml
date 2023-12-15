@@ -11,6 +11,10 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - name: Create .env file from secrets
+        run: |
+          echo "${{ secrets.ENV_VARS }}" > .env
+
       - run: npm ci --no-audit && npm run build
 
       - uses: FirebaseExtended/action-hosting-deploy@v0
