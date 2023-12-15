@@ -1,6 +1,7 @@
 import {
   EmergencyRecording,
   FormatListBulleted,
+  Search,
   Settings,
 } from '@mui/icons-material';
 import { useState } from 'react';
@@ -20,6 +21,11 @@ const menuItems: MenuProps['items'] = [
     icon: <FormatListBulleted />,
   },
   {
+    label: <a href="/search">Search</a>,
+    key: 'search',
+    icon: <Search />,
+  },
+  {
     label: <a href="/settings">Settings</a>,
     key: 'settings',
     icon: <Settings />,
@@ -36,6 +42,8 @@ const getSelectedKey = (pathname: string) => {
       return 'list';
     case 'settings':
       return 'settings';
+    case 'search':
+      return 'search';
     default:
       return '';
   }

@@ -6,12 +6,12 @@ import { FavRecord } from '@/types/FavRecord';
 import { Pagination, Switch, Button, Tooltip } from 'antd';
 import { useEffect, useState } from 'react';
 import { DeleteForever, Update } from '@mui/icons-material';
-const perPage = 50;
 
 type Props = {
   records: FavRecord[];
   onUpdate: (url: string) => Promise<void>;
   onRemove: (url: string) => Promise<void>;
+  notAllowEdit?: boolean;
 };
 
 const EditTools = ({
@@ -44,11 +44,17 @@ const EditTools = ({
   );
 };
 
-export default function FavListing({ records, onUpdate, onRemove }: Props) {
+export default function FavListing({
+  records,
+  onUpdate,
+  onRemove,
+  notAllowEdit,
+}: Props) {
   const [numTotal, setNumTotal] = useState(0);
   const [pageNum, setPageNum] = useState(1);
   const [mode, setMode] = useState<'view' | 'edit'>('view');
   const [recordsShowing, setRecordsShowing] = useState<FavRecord[]>([]);
+  const perPage = 50;
 
   const onPageChange = (page: number, _: number) => {
     setPageNum(page);
@@ -64,41 +70,40 @@ export default function FavListing({ records, onUpdate, onRemove }: Props) {
 
   return (
     <FavConfigProvider>
-      <div className="mx-auto w-full text-center md:w-2/3">
-        <div className="sticky top-0 z-50 flex items-center justify-between bg-slate-800 py-2">
-          <Pagination
-            defaultCurrent={pageNum}
-            total={numTotal}
-            defaultPageSize={perPage}
-            showTotal={(total, range) => `${range[0]}-${range[1]} of ${total}`}
-            showSizeChanger={false}
-            onChange={onPageChange}
-          />
-          <Switch
-            className="ml-2 bg-slate-600"
-            onChange={(checked) => setMode(checked ? 'edit' : 'view')}
-          />
-        </div>
+      <div className="sticky top-0 z-50 flex items-center justify-between bg-slate-800 py-2">
+        <Pagination
+          defaultCurrent={pageNum}
+          total={numTotal}
+          defaultPageSize={perPage}
+          showTotal={(total, range) => `${range[0]}-${range[1]} of ${total}`}
+          showSizeChanger={false}
+          onChange={onPageChange}
+        />
+        <Switch
+          className="ml-2 bg-slate-600"
+          onChange={(checked) => setMode(checked ? 'edit' : 'view')}
+          disabled={records.length === 0 || notAllowEdit}
+        />
+      </div>
 
-        <div>
-          {recordsShowing.map((record, ix) => (
-            <div
-              key={record ? record.url : ix}
-              className="mb-4 flex items-center"
-            >
-              <div className="mr-2" hidden={mode === 'view'}>
-                <EditTools
-                  page={record}
-                  onRemove={(p) => onRemove(p.url)}
-                  onUpdate={(p) => {
-                    onUpdate(p.url);
-                  }}
-                />
-              </div>
-              <LinkCard page={record} onRemove={onRemove} />
+      <div>
+        {recordsShowing.map((record, ix) => (
+          <div
+            key={record ? record.url : ix}
+            className="mb-4 flex items-center"
+          >
+            <div className="mr-2" hidden={mode === 'view'}>
+              <EditTools
+                page={record}
+                onRemove={(p) => onRemove(p.url)}
+                onUpdate={(p) => {
+                  onUpdate(p.url);
+                }}
+              />
             </div>
-          ))}
-        </div>
+            <LinkCard page={record} onRemove={onRemove} />
+          </div>
+        ))}
       </div>
     </FavConfigProvider>
   );

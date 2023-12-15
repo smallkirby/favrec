@@ -101,11 +101,13 @@ export default function FavsPage() {
       {contextHolder}
       <Spin spinning={!countFetched} fullscreen />
 
-      <FavListing
-        records={allRecords}
-        onRemove={onRemove}
-        onUpdate={onUpdate}
-      />
+      <div className="mx-auto w-full text-center md:w-2/3">
+        <FavListing
+          records={allRecords}
+          onRemove={onRemove}
+          onUpdate={onUpdate}
+        />
+      </div>
     </FavConfigProvider>
   );
 }
