@@ -19,6 +19,50 @@ const generateSecuredApiKey = (
   });
 };
 
+const deleteAllUserRecords = async (
+  uid: string,
+  profile: AlgoliaAdminProfile
+): Promise<void> => {
+  const client = algolia(profile.applicationId, profile.adminApiKey);
+  const index = client.initIndex('favs');
+  await index.browseObjects({
+    filters: `userId:${uid}`,
+    batch: (batch) => {
+      const objectIds = batch.map((item) => item.objectID);
+      index.deleteObjects(objectIds);
+    },
+  });
+};
+
+const uploadAllUserRecords = async (
+  uid: string,
+  profile: AlgoliaAdminProfile
+): Promise<void> => {
+  const db = admin.firestore;
+  const favsRefs = db()
+    .collection('users')
+    .doc(uid)
+    .collection('favs')
+    .orderBy('date', 'desc');
+  const favsSnap = await favsRefs.get();
+  const favs = favsSnap.docs.map((doc) => ({
+    ...doc.data(),
+    date: doc.data().date.toDate().getTime(),
+  }));
+
+  const client = algolia(profile.applicationId, profile.adminApiKey);
+  const index = client.initIndex('favs');
+  await index.saveObjects(
+    favs.map((fav) => ({
+      ...fav,
+      userId: uid,
+    })),
+    {
+      autoGenerateObjectIDIfNotExist: true,
+    }
+  );
+};
+
 const dbGetSecuredApiKey = async (
   uid: string,
   profile: AlgoliaAdminProfile
@@ -98,4 +142,28 @@ export const createAlgoliaSecuredApiKey = functions
         searchApiKey: process.env.ALGOLIA_SEARCH_API_KEY!,
       }),
     };
+  });
+
+export const onAlgoliaIntegrationChanged = functions.firestore
+  .document('users/{uid}/settings/general')
+  .onUpdate(async (change, context) => {
+    const before = change.before.data();
+    const after = change.after.data();
+    const profile = {
+      applicationId: process.env.ALGOLIA_APPLICATION_ID!,
+      adminApiKey: process.env.ALGOLIA_ADMIN_API_KEY!,
+      searchApiKey: process.env.ALGOLIA_SEARCH_API_KEY!,
+    };
+    if (before && after && !before.algoliaEnabled && after.algoliaEnabled) {
+      // Enabled
+      await uploadAllUserRecords(context.params.uid, profile);
+    } else if (
+      before &&
+      after &&
+      before.algoliaEnabled &&
+      !after.algoliaEnabled
+    ) {
+      // Disabled
+      await deleteAllUserRecords(context.params.uid, profile);
+    }
   });

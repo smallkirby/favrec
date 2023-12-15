@@ -53,7 +53,10 @@ export default function SearchPage() {
           }
         });
       }
+    } else if (user === null) {
+      router.push('/login');
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [setSettings, settings, user]);
 
   useEffect(() => {

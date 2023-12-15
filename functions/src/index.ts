@@ -170,4 +170,7 @@ export {
   onPostRecordBsky,
 } from './lib/bsky';
 
-export { createAlgoliaSecuredApiKey } from './lib/algolia';
+export {
+  createAlgoliaSecuredApiKey,
+  onAlgoliaIntegrationChanged,
+} from './lib/algolia';
