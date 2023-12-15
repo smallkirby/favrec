@@ -52,6 +52,19 @@ const dbGetSecuredApiKey = async (
   return apiKey;
 };
 
+const canUseAlgolia = async (uid: string): Promise<boolean> => {
+  const db = admin.firestore;
+  const settingsRefs = db().collection('users').doc(uid).collection('settings');
+  const generalRefs = settingsRefs.doc('general');
+  const generalSnap = await generalRefs.get();
+
+  if (generalSnap.exists && generalSnap.data()!.algoliaEnabled) {
+    return true;
+  } else {
+    return false;
+  }
+};
+
 export const createAlgoliaSecuredApiKey = functions
   .region('asia-northeast1')
   .runWith({
@@ -66,6 +79,13 @@ export const createAlgoliaSecuredApiKey = functions
     if (!isAuthed(context.auth)) {
       return {
         err: 'Unauthorized',
+        data: null,
+      };
+    }
+
+    if ((await canUseAlgolia(context.auth!.uid)) === false) {
+      return {
+        err: 'Algolia integration is not  allowed by the user.',
         data: null,
       };
     }
