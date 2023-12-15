@@ -219,7 +219,7 @@ export default function BskySettings({ user, settings }: Props) {
               disabled={!isEnabled}
               onClick={() => setPostRecords(!postRecords)}
             >
-              <p>Post when your record your favorites.</p>
+              <p>Post when you record your favorites.</p>
             </Checkbox>
             <p className="ml-6 text-sm text-slate-500">
               Enabling this will post your record to Bluesky everytime your
