@@ -61,7 +61,7 @@ export default function Record() {
   };
 
   return (
-    <div className="p-4">
+    <div className="py-4">
       <FavConfigProvider>
         {contextHolder}
 
