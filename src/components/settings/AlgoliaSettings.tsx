@@ -1,11 +1,12 @@
 'use client';
 
+import { SettingsContext } from '@/lib/SettingsProvider';
 import { updateGeneralSettings } from '@/lib/firebase/store';
 import { FavConfigProvider } from '@/lib/theme';
 import { FirebaseUser } from '@/types/FirebaseUser';
 import { Settings } from '@/types/Settings';
 import { Switch, message } from 'antd';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 
 type Props = {
   user: FirebaseUser;
@@ -15,8 +16,11 @@ type Props = {
 export default function AlgoliaSettings({ user, settings }: Props) {
   const [isEnabled, setIsEnabled] = useState(settings.algoliaEnabled === true);
   const [messageApi, contextHolder] = message.useMessage();
+  const setSettings = useContext(SettingsContext).setSettings;
 
   useEffect(() => {
+    if (isEnabled === settings.algoliaEnabled) return;
+
     updateGeneralSettings(user, { algoliaEnabled: isEnabled }).then((res) => {
       messageApi.destroy();
 
@@ -28,6 +32,7 @@ export default function AlgoliaSettings({ user, settings }: Props) {
         messageApi.success({
           content: 'Updated Algolia settings.',
         });
+        setSettings({ ...settings, algoliaEnabled: isEnabled });
       }
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -91,6 +91,7 @@ export default function Record() {
               placeholder="URL you read/liked"
               spellCheck={false}
               allowClear
+              size="large"
             />
           </Form.Item>
 
