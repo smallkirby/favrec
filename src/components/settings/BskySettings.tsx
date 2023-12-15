@@ -191,7 +191,7 @@ export default function BskySettings({ user, settings }: Props) {
       <FavConfigProvider>
         {contextHolder}
 
-        <div className="mb-3 flex items-center">
+        <div className="mb-3 flex items-center justify-between pr-4">
           <h2 className="mb-1 mr-4 text-2xl font-bold">Bluesky Integration</h2>
           <Switch
             className="bg-slate-600"
