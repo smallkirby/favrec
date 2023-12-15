@@ -14,7 +14,6 @@ const darkTheme: Partial<ThemeConfig> = {
       colorBgContainer: '#1f293b',
     },
     Button: {
-      primaryColor: '#330033',
       colorTextDisabled: '#475569',
       borderColorDisabled: '#64748b',
     },

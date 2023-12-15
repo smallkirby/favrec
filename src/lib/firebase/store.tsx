@@ -168,6 +168,7 @@ export const getGeneralSettings = async (
           bskyUsername: null,
           bskyPostSummary: false,
           bskyPostRecords: false,
+          algoliaEnabled: false,
         };
       }
     })
