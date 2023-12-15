@@ -48,19 +48,13 @@ const uploadAllUserRecords = async (
   const favs = favsSnap.docs.map((doc) => ({
     ...doc.data(),
     date: doc.data().date.toDate().getTime(),
+    objectID: doc.id,
+    userId: uid,
   }));
 
   const client = algolia(profile.applicationId, profile.adminApiKey);
   const index = client.initIndex('favs');
-  await index.saveObjects(
-    favs.map((fav) => ({
-      ...fav,
-      userId: uid,
-    })),
-    {
-      autoGenerateObjectIDIfNotExist: true,
-    }
-  );
+  await index.saveObjects(favs);
 };
 
 const dbGetSecuredApiKey = async (
@@ -166,4 +160,59 @@ export const onAlgoliaIntegrationChanged = functions.firestore
       // Disabled
       await deleteAllUserRecords(context.params.uid, profile);
     }
+  });
+
+export const onAlgoliaRecordCreated = functions.firestore
+  .document('users/{uid}/favs/{fid}')
+  .onCreate(async (snap, context) => {
+    if (!(await canUseAlgolia(context.params.uid))) {
+      return null;
+    }
+
+    const fav = snap.data();
+    if (!fav) {
+      return null;
+    }
+
+    const client = algolia(
+      process.env.ALGOLIA_APPLICATION_ID!,
+      process.env.ALGOLIA_ADMIN_API_KEY!
+    );
+    const index = client.initIndex('favs');
+    await index.saveObject({
+      ...fav,
+      date: fav.date.toDate().getTime(),
+      userId: context.params.uid,
+      objectID: snap.id,
+    });
+
+    return null;
+  });
+
+export const onAlgoliaRecordDeleted = functions.firestore
+  .document('users/{uid}/favs/{fid}')
+  .onDelete(async (snap, context) => {
+    if (!(await canUseAlgolia(context.params.uid))) {
+      return null;
+    }
+
+    const fav = snap.data();
+    if (!fav) {
+      return null;
+    }
+
+    const client = algolia(
+      process.env.ALGOLIA_APPLICATION_ID!,
+      process.env.ALGOLIA_ADMIN_API_KEY!
+    );
+    const index = client.initIndex('favs');
+    await index.browseObjects({
+      filters: `objectID:${snap.id}`,
+      batch: async (batch) => {
+        const objectIds = batch.map((item) => item.objectID);
+        await index.deleteObjects(objectIds);
+      },
+    });
+
+    return null;
   });

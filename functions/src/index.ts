@@ -173,4 +173,6 @@ export {
 export {
   createAlgoliaSecuredApiKey,
   onAlgoliaIntegrationChanged,
+  onAlgoliaRecordCreated,
+  onAlgoliaRecordDeleted,
 } from './lib/algolia';
