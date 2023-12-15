@@ -18,6 +18,7 @@ import {
   where,
 } from 'firebase/firestore';
 import { httpsCallable } from 'firebase/functions';
+import algoliasearch from 'algoliasearch';
 
 export class PrettyFirebaseError extends Error {
   readonly code: string;
@@ -229,4 +230,54 @@ export const deleteBskyAccount = async (user: FirebaseUser) => {
     .catch((err) => {
       return new PrettyFirebaseError(err);
     });
+};
+
+export const getOrCreateAlgoliaSecuredApiKey = async (
+  user: FirebaseUser
+): Promise<string | PrettyFirebaseError> => {
+  const usersRefs = collection(db, 'users');
+  const userRef = doc(usersRefs, user.uid);
+  const settingsRef = collection(userRef, 'settings');
+  const generalSettingsRef = doc(settingsRef, 'general');
+  const generalSettingsSnap = await getDoc(generalSettingsRef);
+  if (
+    generalSettingsSnap.exists() &&
+    generalSettingsSnap.data()?.algoliaApiKey
+  ) {
+    return generalSettingsSnap.data()?.algoliaApiKey;
+  } else {
+    return await createAlgoliaSecuredApiKey();
+  }
+};
+
+export const createAlgoliaSecuredApiKey = async () => {
+  const callable = httpsCallable(functions, 'createAlgoliaSecuredApiKey');
+  return await callable()
+    .then((res: any) => {
+      if (res.data.err) {
+        return new PrettyFirebaseError(new Error(res.data.err));
+      } else {
+        return res.data.data;
+      }
+    })
+    .catch((err) => {
+      return new PrettyFirebaseError(err);
+    });
+};
+
+export const searchAlgolia = async (
+  userKey: string,
+  term: string
+): Promise<FavRecord[]> => {
+  const client = algoliasearch(
+    process.env.NEXT_PUBLIC_ALGOLIA_APPLICATION_ID!,
+    userKey
+  );
+  const index = client.initIndex('favs');
+  const { hits } = await index.search<FavRecord>(term);
+
+  return hits.map((hit) => ({
+    ...hit,
+    date: new Date(hit.date),
+  }));
 };

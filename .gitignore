@@ -42,3 +42,6 @@ firestore-debug.log
 .firebase
 functions/lib
 firebase-emu
+
+# secrets
+.env

@@ -20,6 +20,7 @@
     "@emotion/styled": "^11.11.0",
     "@mui/icons-material": "^5.14.19",
     "@mui/material": "^5.14.20",
+    "algoliasearch": "^4.22.0",
     "antd": "^5.12.1",
     "axios": "^1.6.2",
     "dayjs": "^1.11.10",
@@ -30,6 +31,7 @@
     "react-dom": "^18"
   },
   "devDependencies": {
+    "@types/algoliasearch": "^4.0.0",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",

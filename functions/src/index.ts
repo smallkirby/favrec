@@ -169,3 +169,5 @@ export {
   deleteBskyAccount,
   onPostRecordBsky,
 } from './lib/bsky';
+
+export { createAlgoliaSecuredApiKey } from './lib/algolia';
