@@ -7,6 +7,7 @@ import { Spin, message } from 'antd';
 import { useRouter } from 'next/navigation';
 import { useContext, useEffect } from 'react';
 import { SettingsContext } from '@/lib/SettingsProvider';
+import AlgoliaSettings from '@/components/settings/AlgoliaSettings';
 
 export default function SettingsPage() {
   const user = useContext(FirebaseAuthContext).user;
@@ -43,6 +44,10 @@ export default function SettingsPage() {
 
         {user && settings ? (
           <>
+            <div className="mt-8">
+              <AlgoliaSettings user={user} settings={settings!} />
+            </div>
+
             <div className="mt-8">
               <BskySettings user={user} settings={settings!} />
             </div>
