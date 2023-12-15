@@ -138,8 +138,15 @@ export const createAlgoliaSecuredApiKey = functions
     };
   });
 
-export const onAlgoliaIntegrationChanged = functions.firestore
-  .document('users/{uid}/settings/general')
+export const onAlgoliaIntegrationChanged = functions
+  .runWith({
+    secrets: [
+      'ALGOLIA_APPLICATION_ID',
+      'ALGOLIA_ADMIN_API_KEY',
+      'ALGOLIA_SEARCH_API_KEY',
+    ],
+  })
+  .firestore.document('users/{uid}/settings/general')
   .onUpdate(async (change, context) => {
     const before = change.before.data();
     const after = change.after.data();
@@ -162,8 +169,15 @@ export const onAlgoliaIntegrationChanged = functions.firestore
     }
   });
 
-export const onAlgoliaRecordCreated = functions.firestore
-  .document('users/{uid}/favs/{fid}')
+export const onAlgoliaRecordCreated = functions
+  .runWith({
+    secrets: [
+      'ALGOLIA_APPLICATION_ID',
+      'ALGOLIA_ADMIN_API_KEY',
+      'ALGOLIA_SEARCH_API_KEY',
+    ],
+  })
+  .firestore.document('users/{uid}/favs/{fid}')
   .onCreate(async (snap, context) => {
     if (!(await canUseAlgolia(context.params.uid))) {
       return null;
@@ -189,8 +203,15 @@ export const onAlgoliaRecordCreated = functions.firestore
     return null;
   });
 
-export const onAlgoliaRecordDeleted = functions.firestore
-  .document('users/{uid}/favs/{fid}')
+export const onAlgoliaRecordDeleted = functions
+  .runWith({
+    secrets: [
+      'ALGOLIA_APPLICATION_ID',
+      'ALGOLIA_ADMIN_API_KEY',
+      'ALGOLIA_SEARCH_API_KEY',
+    ],
+  })
+  .firestore.document('users/{uid}/favs/{fid}')
   .onDelete(async (snap, context) => {
     if (!(await canUseAlgolia(context.params.uid))) {
       return null;
