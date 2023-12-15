@@ -1,22 +1,18 @@
 'use client';
 
 import LinkCard from '@/components/record/LinkCard';
-import { FirebaseAuthContext } from '@/lib/firebase/auth';
-import {
-  deleteFav,
-  getAllFavs,
-  getNumFavs,
-  updateFav,
-} from '@/lib/firebase/store';
 import { FavConfigProvider } from '@/lib/theme';
 import { FavRecord } from '@/types/FavRecord';
-import { Pagination, Spin, Switch, message, Button, Tooltip } from 'antd';
-import { useRouter } from 'next/navigation';
-import { useContext, useEffect, useState } from 'react';
+import { Pagination, Switch, Button, Tooltip } from 'antd';
+import { useEffect, useState } from 'react';
 import { DeleteForever, Update } from '@mui/icons-material';
 const perPage = 50;
 
-type Props = {};
+type Props = {
+  records: FavRecord[];
+  onUpdate: (url: string) => Promise<void>;
+  onRemove: (url: string) => Promise<void>;
+};
 
 const EditTools = ({
   page,
@@ -48,148 +44,62 @@ const EditTools = ({
   );
 };
 
-export default function FavListing({}: Props) {
+export default function FavListing({ records, onUpdate, onRemove }: Props) {
   const [numTotal, setNumTotal] = useState(0);
   const [pageNum, setPageNum] = useState(1);
-  const [records, setRecords] = useState<FavRecord[]>([]);
-  const user = useContext(FirebaseAuthContext).user;
-  const [allRecords, setAllRecords] = useState<FavRecord[]>([]);
-  const router = useRouter();
-  const [messageApi, contextHolder] = message.useMessage();
   const [mode, setMode] = useState<'view' | 'edit'>('view');
-  const [countFetched, setCountFetched] = useState(false);
+  const [recordsShowing, setRecordsShowing] = useState<FavRecord[]>([]);
 
   const onPageChange = (page: number, _: number) => {
     setPageNum(page);
   };
 
-  const onUpdate = async (url: string) => {
-    const key = 'update';
-    if (user) {
-      messageApi.open({
-        key,
-        type: 'loading',
-        content: 'Updating your fav...',
-        duration: 0,
-      });
-      const res = await updateFav(url);
-
-      if (res instanceof Error) {
-        messageApi.open({
-          key,
-          type: 'error',
-          content: `Error: ${res.message}`,
-        });
-      } else {
-        messageApi.open({
-          key,
-          type: 'success',
-          content: 'Updated successfully.',
-        });
-        const newRecord = res as FavRecord;
-        setAllRecords(
-          allRecords.map((record) =>
-            record.url === newRecord.url ? newRecord : { ...record }
-          )
-        );
-      }
-    }
-  };
-
-  const onRemove = async (url: string) => {
-    const key = 'remove';
-    if (user) {
-      messageApi.open({
-        key,
-        type: 'loading',
-        content: 'Removing your fav...',
-        duration: 0,
-      });
-      await deleteFav(user, url);
-
-      messageApi.open({
-        key,
-        type: 'success',
-        content: 'Removed successfully.',
-      });
-      setAllRecords(allRecords.filter((record) => record.url !== url));
-    }
-  };
-
   useEffect(() => {
-    if (user === null) {
-      router.push('/login');
-      return;
-    } else if (user === undefined) {
-      return;
-    }
-
-    // First, fetch only the number of records and set skeltons for them
-    getNumFavs(user).then((num) => {
-      setNumTotal(num);
-      setCountFetched(true);
-      if (allRecords.length === 0) {
-        setAllRecords(new Array(num).fill(null));
-      }
-      // Then, fetch actual all records
-      // TODO: It is desirable to fetch num of records and actual records at once in parallel.
-      getAllFavs(user).then((records) => setAllRecords(records));
-    });
-
+    setRecordsShowing(
+      records.slice((pageNum - 1) * perPage, pageNum * perPage)
+    );
+    setNumTotal(records.length);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user]);
-
-  useEffect(() => {
-    setRecords(allRecords.slice((pageNum - 1) * perPage, pageNum * perPage));
-    setNumTotal(allRecords.length);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pageNum, allRecords]);
+  }, [pageNum, records]);
 
   return (
     <FavConfigProvider>
-      {contextHolder}
-      <Spin spinning={!countFetched} fullscreen />
-
-      {user !== undefined && (
-        <div className="mx-auto w-full text-center md:w-2/3">
-          <div className="sticky top-0 z-50 flex items-center justify-between bg-slate-800 py-2">
-            <Pagination
-              defaultCurrent={pageNum}
-              total={numTotal}
-              defaultPageSize={perPage}
-              showTotal={(total, range) =>
-                `${range[0]}-${range[1]} of ${total}`
-              }
-              showSizeChanger={false}
-              onChange={onPageChange}
-            />
-            <Switch
-              className="ml-2 bg-slate-600"
-              onChange={(checked) => setMode(checked ? 'edit' : 'view')}
-            />
-          </div>
-
-          <div>
-            {records.map((record, ix) => (
-              <div
-                key={record ? record.url : ix}
-                className="mb-4 flex items-center"
-              >
-                <div className="mr-2" hidden={mode === 'view'}>
-                  <EditTools
-                    page={record}
-                    onRemove={(p) => onRemove(p.url)}
-                    onUpdate={(p) => {
-                      onUpdate(p.url);
-                    }}
-                  />
-                </div>
-                <LinkCard page={record} onRemove={onRemove} />
-              </div>
-            ))}
-          </div>
+      <div className="mx-auto w-full text-center md:w-2/3">
+        <div className="sticky top-0 z-50 flex items-center justify-between bg-slate-800 py-2">
+          <Pagination
+            defaultCurrent={pageNum}
+            total={numTotal}
+            defaultPageSize={perPage}
+            showTotal={(total, range) => `${range[0]}-${range[1]} of ${total}`}
+            showSizeChanger={false}
+            onChange={onPageChange}
+          />
+          <Switch
+            className="ml-2 bg-slate-600"
+            onChange={(checked) => setMode(checked ? 'edit' : 'view')}
+          />
         </div>
-      )}
+
+        <div>
+          {recordsShowing.map((record, ix) => (
+            <div
+              key={record ? record.url : ix}
+              className="mb-4 flex items-center"
+            >
+              <div className="mr-2" hidden={mode === 'view'}>
+                <EditTools
+                  page={record}
+                  onRemove={(p) => onRemove(p.url)}
+                  onUpdate={(p) => {
+                    onUpdate(p.url);
+                  }}
+                />
+              </div>
+              <LinkCard page={record} onRemove={onRemove} />
+            </div>
+          ))}
+        </div>
+      </div>
     </FavConfigProvider>
   );
 }
