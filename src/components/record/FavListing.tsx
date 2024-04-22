@@ -56,7 +56,7 @@ export default function FavListing({
   const [mode, setMode] = useState<'view' | 'edit'>('view');
   const [recordsShowing, setRecordsShowing] = useState<FavRecord[]>([]);
   const [messageApi, contextHolder] = message.useMessage();
-  const perPage = 3;
+  const perPage = 30;
 
   const onPageChange = (page: number, _: number) => {
     setPageNum(page);
