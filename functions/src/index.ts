@@ -176,3 +176,5 @@ export {
   onAlgoliaRecordCreated,
   onAlgoliaRecordDeleted,
 } from './lib/algolia';
+
+export { getFavsPaginated } from './lib/get';

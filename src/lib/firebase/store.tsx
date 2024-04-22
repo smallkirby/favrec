@@ -90,6 +90,27 @@ export const getNumFavs = async (user: FirebaseUser) => {
   return favsSnap.data().count;
 };
 
+export const getFavsPaginated = async (
+  entPerPage: number,
+  page: number
+): Promise<FavRecord[]> => {
+  const callable = httpsCallable(functions, 'getFavsPaginated');
+  return await callable({
+    limit: entPerPage,
+    page,
+  })
+    .then((res: any) => {
+      if (res.data.err) {
+        return new PrettyFirebaseError(new Error(res.data.err));
+      } else {
+        return res.data.data;
+      }
+    })
+    .catch((err) => {
+      return new PrettyFirebaseError(err);
+    });
+};
+
 export const getAllFavs = async (user: FirebaseUser): Promise<FavRecord[]> => {
   const usersRef = collection(db, 'users');
   const userRef = doc(usersRef, user.uid);

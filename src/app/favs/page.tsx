@@ -2,24 +2,18 @@
 
 import FavListing from '@/components/record/FavListing';
 import { FirebaseAuthContext } from '@/lib/firebase/auth';
-import {
-  deleteFav,
-  getAllFavs,
-  getNumFavs,
-  updateFav,
-} from '@/lib/firebase/store';
+import { deleteFav, getNumFavs, updateFav } from '@/lib/firebase/store';
 import { FavConfigProvider } from '@/lib/theme';
-import { FavRecord } from '@/types/FavRecord';
 import { Spin, message } from 'antd';
 import { useRouter } from 'next/navigation';
 import { useContext, useEffect, useState } from 'react';
 
 export default function FavsPage() {
-  const [allRecords, setAllRecords] = useState<FavRecord[]>([]);
   const router = useRouter();
   const user = useContext(FirebaseAuthContext).user;
   const [messageApi, contextHolder] = message.useMessage();
   const [countFetched, setCountFetched] = useState(false);
+  const [numRecords, setNumRecords] = useState(0);
 
   const onUpdate = async (url: string) => {
     const key = 'update';
@@ -44,12 +38,7 @@ export default function FavsPage() {
           type: 'success',
           content: 'Updated successfully.',
         });
-        const newRecord = res as FavRecord;
-        setAllRecords(
-          allRecords.map((record) =>
-            record.url === newRecord.url ? newRecord : { ...record }
-          )
-        );
+        setNumRecords((prev) => prev);
       }
     }
   };
@@ -70,7 +59,8 @@ export default function FavsPage() {
         type: 'success',
         content: 'Removed successfully.',
       });
-      setAllRecords(allRecords.filter((record) => record.url !== url));
+
+      setNumRecords((prev) => prev - 1);
     }
   };
 
@@ -85,12 +75,7 @@ export default function FavsPage() {
     // First, fetch only the number of records and set skeltons for them
     getNumFavs(user).then((num) => {
       setCountFetched(true);
-      if (allRecords.length === 0) {
-        setAllRecords(new Array(num).fill(null));
-      }
-      // Then, fetch actual all records
-      // TODO: It is desirable to fetch num of records and actual records at once in parallel.
-      getAllFavs(user).then((records) => setAllRecords(records));
+      setNumRecords(num);
     });
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -103,7 +88,7 @@ export default function FavsPage() {
 
       <div className="mx-auto w-full text-center md:w-2/3">
         <FavListing
-          records={allRecords}
+          numRecords={numRecords}
           onRemove={onRemove}
           onUpdate={onUpdate}
         />
