@@ -2,7 +2,12 @@
 
 import FavListing from '@/components/record/FavListing';
 import { FirebaseAuthContext } from '@/lib/firebase/auth';
-import { deleteFav, getNumFavs, updateFav } from '@/lib/firebase/store';
+import {
+  deleteFav,
+  getFavsPaginated,
+  getNumFavs,
+  updateFav,
+} from '@/lib/firebase/store';
 import { FavConfigProvider } from '@/lib/theme';
 import { Spin, message } from 'antd';
 import { useRouter } from 'next/navigation';
@@ -14,6 +19,10 @@ export default function FavsPage() {
   const [messageApi, contextHolder] = message.useMessage();
   const [countFetched, setCountFetched] = useState(false);
   const [numRecords, setNumRecords] = useState(0);
+
+  const fetchRecords = async (page: number, limit: number) => {
+    return getFavsPaginated(limit, page);
+  };
 
   const onUpdate = async (url: string) => {
     const key = 'update';
@@ -88,6 +97,7 @@ export default function FavsPage() {
 
       <div className="mx-auto w-full text-center md:w-2/3">
         <FavListing
+          fetchRecords={fetchRecords}
           numRecords={numRecords}
           onRemove={onRemove}
           onUpdate={onUpdate}

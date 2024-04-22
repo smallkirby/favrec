@@ -17,23 +17,37 @@ import { useContext, useEffect, useState } from 'react';
 
 export default function SearchPage() {
   const [messageApi, contextHolder] = message.useMessage();
-  const [records, setRecords] = useState<FavRecord[]>([]);
+  const [numRecords, setNumRecords] = useState(0);
+  const [records, setRecords] = useState<(FavRecord | null)[]>([]);
   const [apiKey, setApiKey] = useState<string | null | undefined>(undefined);
+  const [loading, setLoading] = useState(false);
   const user = useContext(FirebaseAuthContext).user;
   const { settings, setSettings } = useContext(SettingsContext);
   const [modal, modalContextHolder] = Modal.useModal();
   const router = useRouter();
 
   const onInputChanged = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    setLoading(true);
     if (!e.target.value || e.target.value.length === 0) {
+      setLoading(false);
+      setNumRecords(0);
       setRecords([]);
       return;
     }
 
     if (apiKey) {
       const hits = await searchAlgolia(apiKey, e.target.value);
+      setNumRecords(hits.length);
       setRecords(hits);
+      setLoading(false);
     }
+  };
+
+  const fetchRecords = async (
+    page: number,
+    limit: number
+  ): Promise<FavRecord[]> => {
+    return records.slice(page * limit, (page + 1) * limit) as FavRecord[];
   };
 
   const onRemove = async (url: string) => {
@@ -91,7 +105,7 @@ export default function SearchPage() {
     <FavConfigProvider>
       {contextHolder}
       {modalContextHolder}
-      <Spin spinning={apiKey === undefined} fullscreen />
+      <Spin spinning={apiKey === undefined || loading} fullscreen />
 
       <div className="mx-auto w-full text-center md:w-2/3">
         <Input
@@ -104,7 +118,8 @@ export default function SearchPage() {
 
         <div className="mt-8">
           <FavListing
-            records={records}
+            fetchRecords={fetchRecords}
+            numRecords={numRecords}
             onRemove={onRemove}
             onUpdate={onUpdate}
             notAllowEdit

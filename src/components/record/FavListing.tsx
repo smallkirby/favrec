@@ -6,10 +6,10 @@ import { FavRecord } from '@/types/FavRecord';
 import { Pagination, Switch, Button, Tooltip, message } from 'antd';
 import { useEffect, useState } from 'react';
 import { DeleteForever, Update } from '@mui/icons-material';
-import { getFavsPaginated } from '@/lib/firebase/store';
 
 type Props = {
   numRecords: number;
+  fetchRecords: (page: number, limit: number) => Promise<FavRecord[]>;
   onUpdate: (url: string) => Promise<void>;
   onRemove: (url: string) => Promise<void>;
   notAllowEdit?: boolean;
@@ -47,6 +47,7 @@ const EditTools = ({
 
 export default function FavListing({
   numRecords,
+  fetchRecords,
   onUpdate,
   onRemove,
   notAllowEdit,
@@ -55,7 +56,7 @@ export default function FavListing({
   const [mode, setMode] = useState<'view' | 'edit'>('view');
   const [recordsShowing, setRecordsShowing] = useState<FavRecord[]>([]);
   const [messageApi, contextHolder] = message.useMessage();
-  const perPage = 30;
+  const perPage = 3;
 
   const onPageChange = (page: number, _: number) => {
     setPageNum(page);
@@ -64,7 +65,7 @@ export default function FavListing({
   useEffect(() => {
     setRecordsShowing(new Array(perPage).fill(null));
 
-    getFavsPaginated(perPage, pageNum - 1)
+    fetchRecords(pageNum - 1, perPage)
       .then((res) => {
         setRecordsShowing(res);
       })
