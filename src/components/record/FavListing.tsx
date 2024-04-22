@@ -3,7 +3,7 @@
 import LinkCard from '@/components/record/LinkCard';
 import { FavConfigProvider } from '@/lib/theme';
 import { FavRecord } from '@/types/FavRecord';
-import { Pagination, Switch, Button, Tooltip } from 'antd';
+import { Pagination, Switch, Button, Tooltip, message } from 'antd';
 import { useEffect, useState } from 'react';
 import { DeleteForever, Update } from '@mui/icons-material';
 import { getFavsPaginated } from '@/lib/firebase/store';
@@ -54,6 +54,7 @@ export default function FavListing({
   const [pageNum, setPageNum] = useState(1);
   const [mode, setMode] = useState<'view' | 'edit'>('view');
   const [recordsShowing, setRecordsShowing] = useState<FavRecord[]>([]);
+  const [messageApi, contextHolder] = message.useMessage();
   const perPage = 30;
 
   const onPageChange = (page: number, _: number) => {
@@ -68,13 +69,18 @@ export default function FavListing({
         setRecordsShowing(res);
       })
       .catch((err) => {
-        console.error(err); // TODO
+        messageApi.open({
+          key: 'favs-fetch',
+          type: 'error',
+          content: `Error: ${err.message}`,
+        });
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pageNum, numRecords]);
 
   return (
     <FavConfigProvider>
+      {contextHolder}
       <div className="sticky top-0 z-50 flex items-center justify-between bg-slate-800 py-2">
         <Pagination
           defaultCurrent={pageNum}

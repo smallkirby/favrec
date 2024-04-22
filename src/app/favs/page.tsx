@@ -38,6 +38,7 @@ export default function FavsPage() {
           type: 'success',
           content: 'Updated successfully.',
         });
+        setNumRecords((prev) => prev);
       }
     }
   };
@@ -58,6 +59,8 @@ export default function FavsPage() {
         type: 'success',
         content: 'Removed successfully.',
       });
+
+      setNumRecords((prev) => prev - 1);
     }
   };
 
