@@ -29,6 +29,7 @@ export const getFavsPaginated = functions
       .collection('users')
       .doc(context.auth!.uid)
       .collection('favs')
+      .orderBy('date', 'desc')
       .limit(limit)
       .offset(page * limit);
     return await ref
