@@ -32,7 +32,7 @@ export default function LoginBox() {
       <Card className="!mx-auto !border-slate-600 text-center shadow-sm drop-shadow-md md:mx-auto md:w-96">
         <div className="my-2">
           <Image
-            src="https://github.githubassets.com/images/modules/logos_page/Octocat.png"
+            src="/logo/github-mark-white.png"
             alt="GitHub Logo"
             width={50}
           />
