@@ -1,5 +1,4 @@
 import * as functions from 'firebase-functions';
-import { FavRecord } from '../types/FavRecord';
 import { isAuthed } from './auth';
 import { getFirestore } from 'firebase-admin/firestore';
 
@@ -38,11 +37,10 @@ export const getFavsPaginated = functions
         return {
           err: null,
           data: snap.docs.map((doc) => {
-            const data = doc.data();
             return {
-              ...data,
-              date: data.date.toDate(),
-            } as FavRecord;
+              ...doc.data(),
+              date: doc.data().date.toDate().toISOString(),
+            };
           }),
         };
       })

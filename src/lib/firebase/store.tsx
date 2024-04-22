@@ -19,6 +19,7 @@ import {
 } from 'firebase/firestore';
 import { httpsCallable } from 'firebase/functions';
 import algoliasearch from 'algoliasearch';
+import dayjs from 'dayjs';
 
 export class PrettyFirebaseError extends Error {
   readonly code: string;
@@ -103,7 +104,13 @@ export const getFavsPaginated = async (
       if (res.data.err) {
         return new PrettyFirebaseError(new Error(res.data.err));
       } else {
-        return res.data.data;
+        return res.data.data.map((d: any) => {
+          const dateString = d.date;
+          return {
+            ...d,
+            date: dayjs(dateString).toDate(),
+          } as FavRecord;
+        });
       }
     })
     .catch((err) => {
