@@ -35,6 +35,11 @@ Data is imported/exported from/to `./emulator-data` directory.
 
 All the three components are deployed to Firebase using GitHub Actions with the service account.
 
+```sh
+# functions
+npx firebase deploy --only functions
+```
+
 ## Notes / Known Issues
 
 - [FirebaseExtended/action-hosting-deploy](https://github.com/FirebaseExtended/action-hosting-deploy) does not support deployment other than Hosting.

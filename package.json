@@ -2,6 +2,7 @@
   "name": "favrec",
   "version": "0.1.0",
   "private": true,
+  "engine": "20",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -35,7 +36,6 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.51.1",
-    "@types/algoliasearch": "^4.0.0",
     "@types/node": "^22",
     "@types/react": "^18",
     "@types/react-dom": "^18",
