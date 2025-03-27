@@ -29,7 +29,7 @@
     "dayjs": "^1.11.10",
     "firebase": "^10.7.1",
     "next": "14.0.3",
-    "react": "^18",
+    "react": "^19",
     "react-device-detect": "^2.2.3",
     "react-dom": "^18"
   },
@@ -37,7 +37,7 @@
     "@playwright/test": "^1.51.1",
     "@types/algoliasearch": "^4.0.0",
     "@types/node": "^22",
-    "@types/react": "^18",
+    "@types/react": "^19",
     "@types/react-dom": "^18",
     "autoprefixer": "^10.4.21",
     "eslint": "^8",
