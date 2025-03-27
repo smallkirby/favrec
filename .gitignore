@@ -45,3 +45,6 @@ firebase-emu
 
 # secrets
 .env
+
+# tests
+/test-results
