@@ -1,7 +1,19 @@
 import algolia from 'algoliasearch';
 import { isAuthed } from './auth';
-import * as functions from 'firebase-functions';
-import * as admin from 'firebase-admin';
+import { onCall } from 'firebase-functions/v2/https';
+import { getFirestore } from 'firebase-admin/firestore';
+import {
+  onDocumentCreated,
+  onDocumentDeleted,
+  onDocumentUpdated,
+} from 'firebase-functions/v2/firestore';
+import { defineSecret } from 'firebase-functions/params';
+
+const algoliaSearchApiKey = defineSecret('ALGOLIA_SEARCH_API_KEY');
+const algoliaAdminApiKey = defineSecret('ALGOLIA_ADMIN_API_KEY');
+const algoliaApplicationId = defineSecret('ALGOLIA_APPLICATION_ID');
+
+const firestore = getFirestore();
 
 type AlgoliaAdminProfile = {
   applicationId: string;
@@ -38,8 +50,7 @@ const uploadAllUserRecords = async (
   uid: string,
   profile: AlgoliaAdminProfile
 ): Promise<void> => {
-  const db = admin.firestore;
-  const favsRefs = db()
+  const favsRefs = firestore
     .collection('users')
     .doc(uid)
     .collection('favs')
@@ -61,8 +72,7 @@ const dbGetSecuredApiKey = async (
   uid: string,
   profile: AlgoliaAdminProfile
 ): Promise<string | null> => {
-  const db = admin.firestore;
-  const generalSnap = await db()
+  const generalSnap = await firestore
     .collection('users')
     .doc(uid)
     .collection('settings')
@@ -91,8 +101,10 @@ const dbGetSecuredApiKey = async (
 };
 
 const canUseAlgolia = async (uid: string): Promise<boolean> => {
-  const db = admin.firestore;
-  const settingsRefs = db().collection('users').doc(uid).collection('settings');
+  const settingsRefs = firestore
+    .collection('users')
+    .doc(uid)
+    .collection('settings');
   const generalRefs = settingsRefs.doc('general');
   const generalSnap = await generalRefs.get();
 
@@ -103,25 +115,22 @@ const canUseAlgolia = async (uid: string): Promise<boolean> => {
   }
 };
 
-export const createAlgoliaSecuredApiKey = functions
-  .region('asia-northeast1')
-  .runWith({
-    memory: '1GB',
-    secrets: [
-      'ALGOLIA_APPLICATION_ID',
-      'ALGOLIA_ADMIN_API_KEY',
-      'ALGOLIA_SEARCH_API_KEY',
-    ],
-  })
-  .https.onCall(async (_, context) => {
-    if (!isAuthed(context.auth)) {
+export const createAlgoliaSecuredApiKey = onCall(
+  {
+    memory: '1GiB',
+    secrets: [algoliaSearchApiKey, algoliaAdminApiKey, algoliaApplicationId],
+  },
+  async (req) => {
+    const auth = req.auth;
+
+    if (!isAuthed(auth)) {
       return {
         err: 'Unauthorized',
         data: null,
       };
     }
 
-    if ((await canUseAlgolia(context.auth!.uid)) === false) {
+    if ((await canUseAlgolia(auth!.uid)) === false) {
       return {
         err: 'Algolia integration is not  allowed by the user.',
         data: null,
@@ -130,26 +139,29 @@ export const createAlgoliaSecuredApiKey = functions
 
     return {
       err: null,
-      data: await dbGetSecuredApiKey(context.auth!.uid, {
+      data: await dbGetSecuredApiKey(auth!.uid, {
         applicationId: process.env.ALGOLIA_APPLICATION_ID!,
         adminApiKey: process.env.ALGOLIA_ADMIN_API_KEY!,
         searchApiKey: process.env.ALGOLIA_SEARCH_API_KEY!,
       }),
     };
-  });
+  }
+);
 
-export const onAlgoliaIntegrationChanged = functions
-  .runWith({
-    secrets: [
-      'ALGOLIA_APPLICATION_ID',
-      'ALGOLIA_ADMIN_API_KEY',
-      'ALGOLIA_SEARCH_API_KEY',
-    ],
-  })
-  .firestore.document('users/{uid}/settings/general')
-  .onUpdate(async (change, context) => {
-    const before = change.before.data();
-    const after = change.after.data();
+export const onAlgoliaIntegrationChanged = onDocumentUpdated(
+  {
+    document: 'users/{uid}/settings/general',
+    secrets: [algoliaSearchApiKey, algoliaAdminApiKey, algoliaApplicationId],
+  },
+  async (event) => {
+    const data = event.data;
+    if (!data) {
+      return;
+    }
+    const params = event.params;
+
+    const before = data.before.data();
+    const after = data.after.data();
     const profile = {
       applicationId: process.env.ALGOLIA_APPLICATION_ID!,
       adminApiKey: process.env.ALGOLIA_ADMIN_API_KEY!,
@@ -157,7 +169,7 @@ export const onAlgoliaIntegrationChanged = functions
     };
     if (before && after && !before.algoliaEnabled && after.algoliaEnabled) {
       // Enabled
-      await uploadAllUserRecords(context.params.uid, profile);
+      await uploadAllUserRecords(params.uid, profile);
     } else if (
       before &&
       after &&
@@ -165,25 +177,28 @@ export const onAlgoliaIntegrationChanged = functions
       !after.algoliaEnabled
     ) {
       // Disabled
-      await deleteAllUserRecords(context.params.uid, profile);
+      await deleteAllUserRecords(params.uid, profile);
     }
-  });
+  }
+);
 
-export const onAlgoliaRecordCreated = functions
-  .runWith({
-    secrets: [
-      'ALGOLIA_APPLICATION_ID',
-      'ALGOLIA_ADMIN_API_KEY',
-      'ALGOLIA_SEARCH_API_KEY',
-    ],
-  })
-  .firestore.document('users/{uid}/favs/{fid}')
-  .onCreate(async (snap, context) => {
-    if (!(await canUseAlgolia(context.params.uid))) {
+export const onAlgoliaRecordCreated = onDocumentCreated(
+  {
+    document: 'users/{uid}/favs/{fid}',
+    secrets: [algoliaSearchApiKey, algoliaAdminApiKey, algoliaApplicationId],
+  },
+  async (event) => {
+    const params = event.params;
+    const snapshot = event.data;
+    if (!snapshot) {
       return null;
     }
 
-    const fav = snap.data();
+    if (!(await canUseAlgolia(params.uid))) {
+      return null;
+    }
+
+    const fav = snapshot.data();
     if (!fav) {
       return null;
     }
@@ -196,28 +211,35 @@ export const onAlgoliaRecordCreated = functions
     await index.saveObject({
       ...fav,
       date: fav.date.toDate().getTime(),
-      userId: context.params.uid,
-      objectID: snap.id,
+      userId: params.uid,
+      objectID: snapshot.id,
     });
 
     return null;
-  });
+  }
+);
 
-export const onAlgoliaRecordDeleted = functions
-  .runWith({
+export const onAlgoliaRecordDeleted = onDocumentDeleted(
+  {
+    document: 'users/{uid}/favs/{fid}',
     secrets: [
       'ALGOLIA_APPLICATION_ID',
       'ALGOLIA_ADMIN_API_KEY',
       'ALGOLIA_SEARCH_API_KEY',
     ],
-  })
-  .firestore.document('users/{uid}/favs/{fid}')
-  .onDelete(async (snap, context) => {
-    if (!(await canUseAlgolia(context.params.uid))) {
+  },
+  async (event) => {
+    const params = event.params;
+    const snapshot = event.data;
+    if (!snapshot) {
       return null;
     }
 
-    const fav = snap.data();
+    if (!(await canUseAlgolia(params.uid))) {
+      return null;
+    }
+
+    const fav = snapshot.data();
     if (!fav) {
       return null;
     }
@@ -228,7 +250,7 @@ export const onAlgoliaRecordDeleted = functions
     );
     const index = client.initIndex('favs');
     await index.browseObjects({
-      filters: `objectID:${snap.id}`,
+      filters: `objectID:${snapshot.id}`,
       batch: async (batch) => {
         const objectIds = batch.map((item) => item.objectID);
         await index.deleteObjects(objectIds);
@@ -236,4 +258,5 @@ export const onAlgoliaRecordDeleted = functions
     });
 
     return null;
-  });
+  }
+);
