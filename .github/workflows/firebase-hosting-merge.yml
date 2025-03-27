@@ -29,7 +29,7 @@ jobs:
         run: cd functions && npm ci --no-audit && npm run build
 
       - name: Deploy Functions and Firestore
-        uses: w9jds/firebase-action@60eb33e21063ef8f202cc19037b61adbaf334f96
+        uses: w9jds/firebase-action@v13.35.1
         with:
           # `--only functions,firestore` does not work, why...?
           args: deploy --only firestore,functions
