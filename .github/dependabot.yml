@@ -8,11 +8,40 @@ updates:
       - 'smallkirby'
     labels:
       - 'dependencies'
+    groups:
+      react-next:
+        dependency-type: production
+        patterns:
+          - 'react'
+          - 'next'
+      dev-dependencies:
+        dependency-type: production
+        patterns:
+          - '*'
+      prod-dependencies:
+        dependency-type: production
+        patterns:
+          - '*'
+
   - package-ecosystem: 'npm'
     directory: '/functions'
     schedule:
-      interval: 'weekly'
+      interval: 'daily'
     reviewers:
       - 'smallkirby'
     labels:
       - 'dependencies'
+    groups:
+      firebase:
+        dependency-type: production
+        patterns:
+          - 'firebase-admin'
+          - 'firebase-functions'
+      dev-dependencies:
+        dependency-type: production
+        patterns:
+          - '*'
+      prod-dependencies:
+        dependency-type: production
+        patterns:
+          - '*'
