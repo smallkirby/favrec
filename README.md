@@ -2,7 +2,8 @@
 
 ![Lint](https://github.com/smallkirby/favrec/actions/workflows/lint.yml/badge.svg)
 ![Test](https://github.com/smallkirby/favrec/actions/workflows/test.yml/badge.svg)
-![Deploy](https://github.com/smallkirby/favrec/actions/workflows/firebase-hosting-merge.yml/badge.svg)
+![Deploy Hosting](https://github.com/smallkirby/favrec/actions/workflows/firebase-hosting.yml/badge.svg)
+![Deploy Functions](https://github.com/smallkirby/favrec/actions/workflows/firebase-functions.yml/badge.svg)
 
 ## Development
 
