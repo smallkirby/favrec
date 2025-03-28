@@ -1,4 +1,4 @@
-import algoliasearch from 'algoliasearch';
+import { algoliasearch } from 'algoliasearch';
 import dayjs from 'dayjs';
 import { FirebaseError } from 'firebase/app';
 import {
@@ -309,11 +309,20 @@ export const searchAlgolia = async (
     process.env.NEXT_PUBLIC_ALGOLIA_APPLICATION_ID,
     userKey,
   );
-  const index = client.initIndex('favs');
-  const { hits } = await index.search<FavRecord>(term);
+  const { results } = await client.searchForHits<FavRecord>({
+    requests: [
+      {
+        indexName: 'favs',
+        query: term,
+      },
+    ],
+    strategy: 'none',
+  });
 
-  return hits.map((hit) => ({
-    ...hit,
-    date: new Date(hit.date),
-  }));
+  return results.flatMap((result) => {
+    return result.hits.map((hit) => ({
+      ...hit,
+      date: new Date(hit.date),
+    }));
+  });
 };
