@@ -4,6 +4,7 @@ import UserBadge from '@/components/common/UserBadge';
 import { useRouter } from 'next/navigation';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import HeadMenu from './Menu';
+import Link from 'next/link';
 
 export default function Header() {
   const router = useRouter();
@@ -11,7 +12,7 @@ export default function Header() {
   return (
     <header className="navbar mb-4">
       <div className="flex items-center justify-between px-4 pt-2">
-        <a href="/">
+        <Link href="/">
           <button
             className="group flex cursor-pointer items-center border-none bg-slate-800
             py-0 font-cute text-pink-500 duration-300 hover:text-pink-800"
@@ -23,7 +24,7 @@ export default function Header() {
               className="pb-[1px] group-hover:animate-ping"
             />
           </button>
-        </a>
+        </Link>
 
         <div className="ml-8 hidden flex-1 pr-4 md:block">
           <HeadMenu />

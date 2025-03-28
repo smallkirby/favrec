@@ -8,25 +8,26 @@ import { useState } from 'react';
 import { Menu, MenuProps } from 'antd';
 import { usePathname } from 'next/navigation';
 import { FavConfigProvider } from '@/lib/theme';
+import Link from 'next/link';
 
 const menuItems: MenuProps['items'] = [
   {
-    label: <a href="/">Record</a>,
+    label: <Link href="/">Record</Link>,
     key: 'record',
     icon: <EmergencyRecording />,
   },
   {
-    label: <a href="/favs">List</a>,
+    label: <Link href="/favs">List</Link>,
     key: 'list',
     icon: <FormatListBulleted />,
   },
   {
-    label: <a href="/search">Search</a>,
+    label: <Link href="/search">Search</Link>,
     key: 'search',
     icon: <Search />,
   },
   {
-    label: <a href="/settings">Settings</a>,
+    label: <Link href="/settings">Settings</Link>,
     key: 'settings',
     icon: <Settings />,
   },
