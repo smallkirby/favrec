@@ -4,11 +4,11 @@ import {
   Search,
   Settings,
 } from '@mui/icons-material';
-import { useState } from 'react';
-import { Menu, MenuProps } from 'antd';
-import { usePathname } from 'next/navigation';
-import { FavConfigProvider } from '@/lib/theme';
+import { Menu, type MenuProps } from 'antd';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { useState } from 'react';
+import { FavConfigProvider } from '@/lib/theme';
 
 const menuItems: MenuProps['items'] = [
   {

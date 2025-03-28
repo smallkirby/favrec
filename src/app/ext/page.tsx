@@ -1,8 +1,8 @@
 'use client';
 
-import { FirebaseAuthContext } from '@/lib/firebase/auth';
 import { useRouter } from 'next/navigation';
 import { useContext, useEffect, useState } from 'react';
+import { FirebaseAuthContext } from '@/lib/firebase/auth';
 import { getCustomToken } from '@/lib/firebase/store';
 
 export default function ExtensionPage() {
@@ -14,7 +14,8 @@ export default function ExtensionPage() {
     if (user === null) {
       router.push('/login');
       return;
-    } else if (user === undefined) {
+    }
+    if (user === undefined) {
       return;
     }
 
@@ -34,7 +35,7 @@ export default function ExtensionPage() {
         Then click <span className="font-bold text-pink-500">Login</span> button
         on the Extension popup.
       </p>
-      <code hidden id="favrec-login-token">
+      <code hidden={true} id="favrec-login-token">
         {token}
       </code>
     </div>

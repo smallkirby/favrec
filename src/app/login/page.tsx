@@ -1,9 +1,9 @@
 'use client';
 
-import LoginBox from '@/components/login/LoginBox';
-import { FirebaseAuthContext } from '@/lib/firebase/auth';
 import { useRouter } from 'next/navigation';
 import { useContext, useEffect } from 'react';
+import LoginBox from '@/components/login/LoginBox';
+import { FirebaseAuthContext } from '@/lib/firebase/auth';
 
 export default function Login() {
   const router = useRouter();

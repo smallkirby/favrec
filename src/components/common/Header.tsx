@@ -1,10 +1,10 @@
 'use client';
 
-import UserBadge from '@/components/common/UserBadge';
-import { useRouter } from 'next/navigation';
 import FavoriteIcon from '@mui/icons-material/Favorite';
-import HeadMenu from './Menu';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import UserBadge from '@/components/common/UserBadge';
+import HeadMenu from './Menu';
 
 export default function Header() {
   const router = useRouter();
@@ -14,6 +14,7 @@ export default function Header() {
       <div className="flex items-center justify-between px-4 pt-2">
         <Link href="/">
           <button
+            type="button"
             className="group flex cursor-pointer items-center border-none bg-slate-800 py-0 font-cute
               text-pink-500 duration-300 hover:text-pink-800"
             onClick={() => router.push('/')}

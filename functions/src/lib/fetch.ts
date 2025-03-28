@@ -1,12 +1,14 @@
-import { FavRecord } from '../types/FavRecord';
 import axios from 'axios';
 import { JSDOM } from 'jsdom';
+import type { FavRecord } from '../types/FavRecord.tsx';
 
 axios.defaults.responseType = 'arraybuffer';
 axios.defaults.responseEncoding = 'binary';
 
 const complementPathUrl = (url: string, domain: string): string => {
-  if (url.startsWith('http')) return url;
+  if (url.startsWith('http')) {
+    return url;
+  }
 
   if (url.startsWith('/')) {
     return `https://${domain}${url}`;
@@ -19,16 +21,22 @@ const getTitle = (doc: Document): string => {
   const ogTitle = doc.querySelector("meta[property='og:title']");
   if (ogTitle) {
     const content = ogTitle.getAttribute('content');
-    if (content) return content;
+    if (content) {
+      return content;
+    }
   }
 
   const title = doc.title;
-  if (title) return title;
+  if (title) {
+    return title;
+  }
 
   const twitterCard = doc.querySelector("meta[name='twitter:title']");
   if (twitterCard) {
     const content = twitterCard.getAttribute('content');
-    if (content) return content;
+    if (content) {
+      return content;
+    }
   }
 
   return '';
@@ -37,35 +45,46 @@ const getTitle = (doc: Document): string => {
 const getImage = (
   doc: Document,
   domain: string,
-  url: string
+  url: string,
 ): string | null => {
   switch (domain) {
-    case 'zenn.dev':
+    case 'zenn.dev': {
       const userName = url.split('/')[3];
       const img = doc.querySelector(`img[alt='${userName}']`);
-      if (img && img.getAttribute('href')) {
-        return complementPathUrl(img.getAttribute('src')!, domain);
+      if (img?.getAttribute('href')) {
+        const src = img.getAttribute('src');
+        if (!src) {
+          break;
+        }
+        return complementPathUrl(src, domain);
       }
       break;
+    }
   }
 
   const ogImage = doc.querySelector("meta[property='og:image']");
   if (ogImage) {
     const content = ogImage.getAttribute('content');
-    if (content) return complementPathUrl(content, domain);
+    if (content) {
+      return complementPathUrl(content, domain);
+    }
   }
 
   const twitterCard = doc.querySelector("meta[name='twitter:image']");
   if (twitterCard) {
     const content = twitterCard.getAttribute('content');
-    if (content) return complementPathUrl(content, domain);
+    if (content) {
+      return complementPathUrl(content, domain);
+    }
   }
 
   // Use the first img by default
   const img = doc.querySelector('img');
   if (img) {
     const src = img.getAttribute('src');
-    if (src) return complementPathUrl(src, domain);
+    if (src) {
+      return complementPathUrl(src, domain);
+    }
   }
 
   return null;
@@ -73,28 +92,35 @@ const getImage = (
 
 const getDescription = (
   metaTags: HTMLCollectionOf<HTMLMetaElement>,
-  domain: string
+  domain: string,
 ): string => {
   switch (domain) {
-    case 'zenn.dev':
+    case 'zenn.dev': {
       const description = metaTags.namedItem('description');
       if (description) {
         const content = description.getAttribute('content');
-        if (content) return content;
+        if (content) {
+          return content;
+        }
       }
       break;
+    }
   }
 
   const ogDescription = metaTags.namedItem('og:description');
   if (ogDescription) {
     const content = ogDescription.getAttribute('content');
-    if (content) return content;
+    if (content) {
+      return content;
+    }
   }
 
   const twitterCard = metaTags.namedItem('twitter:description');
   if (twitterCard) {
     const content = twitterCard.getAttribute('content');
-    if (content) return content;
+    if (content) {
+      return content;
+    }
   }
 
   return '';
@@ -102,29 +128,35 @@ const getDescription = (
 
 const getFavicon = (doc: Document, domain: string): string | null => {
   let favicon = doc.querySelector("link[rel='icon']");
-  if (!favicon) favicon = doc.querySelector("link[rel='shortcut icon']");
-  if (!favicon) return `https://${domain}/favicon.ico`;
+  if (!favicon) {
+    favicon = doc.querySelector("link[rel='shortcut icon']");
+  }
+  if (!favicon) {
+    return `https://${domain}/favicon.ico`;
+  }
 
   const href = favicon.getAttribute('href');
-  if (!href) return `https://${domain}/favicon.ico`;
+  if (!href) {
+    return `https://${domain}/favicon.ico`;
+  }
   return complementPathUrl(href, domain);
 };
 
 export const fetchPageInfo = async (
-  url: string
+  url: string,
 ): Promise<Omit<FavRecord, 'id' | 'date'> | null> => {
   const res = await axios
     .get(url)
     .then((res) => res)
-    .catch((e) => {
-      console.error(`Failed to fetch page (${url}}: ${e})`);
+    .catch((_e) => {
       return null;
     });
-  if (!res) return null;
+  if (!res) {
+    return null;
+  }
 
   const contentType = res.headers['content-type'];
-  if (!contentType || !contentType.includes('text/html')) {
-    console.error(`Content type is not html (${contentType})`);
+  if (!contentType?.includes('text/html')) {
     return null;
   }
 

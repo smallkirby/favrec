@@ -1,10 +1,10 @@
 'use client';
 
+import { LoginOutlined, LogoutOutlined, UserOutlined } from '@ant-design/icons';
+import { Avatar, Dropdown, Image, type MenuProps, Space, Spin } from 'antd';
+import { useRouter } from 'next/navigation';
 import { FirebaseAuthContext, logout } from '@/lib/firebase/auth';
 import { FavConfigProvider } from '@/lib/theme';
-import { LoginOutlined, LogoutOutlined, UserOutlined } from '@ant-design/icons';
-import { Avatar, Dropdown, Image, MenuProps, Space, Spin } from 'antd';
-import { useRouter } from 'next/navigation';
 
 export default function UserBadge() {
   const items: MenuProps['items'] = [];
@@ -34,7 +34,7 @@ export default function UserBadge() {
       <FirebaseAuthContext.Consumer>
         {({ user }) => (
           <Dropdown menu={{ items: [...items, user ? menuLogout : menuLogin] }}>
-            <Space wrap size={16}>
+            <Space wrap={true} size={16}>
               {user === undefined ? (
                 <Spin size="large" />
               ) : (
@@ -42,7 +42,7 @@ export default function UserBadge() {
                   className="cursor-pointer"
                   size={40}
                   icon={
-                    user && user.photoUrl ? (
+                    user?.photoUrl ? (
                       <Image
                         src={user.photoUrl}
                         alt={user.displayName || ''}

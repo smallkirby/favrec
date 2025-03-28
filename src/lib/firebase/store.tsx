@@ -1,7 +1,5 @@
-import { store as db, functions } from '@/lib/firebase/app';
-import { Settings } from '@/types/Settings';
-import { FavRecord } from '@/types/FavRecord';
-import { FirebaseUser } from '@/types/FirebaseUser';
+import algoliasearch from 'algoliasearch';
+import dayjs from 'dayjs';
 import { FirebaseError } from 'firebase/app';
 import {
   collection,
@@ -18,8 +16,10 @@ import {
   where,
 } from 'firebase/firestore';
 import { httpsCallable } from 'firebase/functions';
-import algoliasearch from 'algoliasearch';
-import dayjs from 'dayjs';
+import { store as db, functions } from '@/lib/firebase/app';
+import type { FavRecord } from '@/types/FavRecord';
+import type { FirebaseUser } from '@/types/FirebaseUser';
+import type { Settings } from '@/types/Settings';
 
 export class PrettyFirebaseError extends Error {
   readonly code: string;
@@ -30,14 +30,16 @@ export class PrettyFirebaseError extends Error {
 
     if (error instanceof FirebaseError) {
       switch (error.code) {
-        case 'permission-denied':
+        case 'permission-denied': {
           this.code = 'permission-denied';
-          this.message = 'Permisson Denied.';
+          this.message = 'Permission Denied.';
           break;
-        default:
+        }
+        default: {
           this.code = 'unknown';
           this.message = error.message;
           break;
+        }
       }
     } else {
       this.code = 'unknown';
@@ -50,12 +52,12 @@ export const recordFav = async (url: string) => {
   const callable = httpsCallable(functions, 'recordPageInfo');
 
   return await callable({ url })
+    // biome-ignore lint: TODO
     .then((res: any) => {
       if (res.data.err) {
         return new PrettyFirebaseError(new Error(res.data.err));
-      } else {
-        return null;
       }
+      return null;
     })
     .catch((err) => {
       return new PrettyFirebaseError(err);
@@ -66,16 +68,16 @@ export const updateFav = async (url: string) => {
   const callable = httpsCallable(functions, 'updatePageInfo');
 
   return await callable({ url })
+    // biome-ignore lint: TODO
     .then((res: any) => {
       if (res.data.err) {
         return new PrettyFirebaseError(new Error(res.data.err));
-      } else {
-        const data = res.data.data;
-        return {
-          ...data,
-          date: new Date(data.date),
-        } as FavRecord;
       }
+      const data = res.data.data;
+      return {
+        ...data,
+        date: new Date(data.date),
+      } as FavRecord;
     })
     .catch((err) => {
       return new PrettyFirebaseError(err);
@@ -93,25 +95,26 @@ export const getNumFavs = async (user: FirebaseUser) => {
 
 export const getFavsPaginated = async (
   entPerPage: number,
-  page: number
+  page: number,
 ): Promise<FavRecord[]> => {
   const callable = httpsCallable(functions, 'getFavsPaginated');
   return await callable({
     limit: entPerPage,
     page,
   })
+    // biome-ignore lint: TODO
     .then((res: any) => {
       if (res.data.err) {
         return new PrettyFirebaseError(new Error(res.data.err));
-      } else {
-        return res.data.data.map((d: any) => {
-          const dateString = d.date;
-          return {
-            ...d,
-            date: dayjs(dateString).toDate(),
-          } as FavRecord;
-        });
       }
+      // biome-ignore lint: TODO
+      return res.data.data.map((d: any) => {
+        const dateString = d.date;
+        return {
+          ...d,
+          date: dayjs(dateString).toDate(),
+        } as FavRecord;
+      });
     })
     .catch((err) => {
       return new PrettyFirebaseError(err);
@@ -141,7 +144,7 @@ export const deleteFav = async (user: FirebaseUser, url: string) => {
   const quer = query(favsRef, where('url', '==', url));
   const docSnap = await getDocs(quer);
 
-  if (docSnap.size !== 0) {
+  if (docSnap.size > 0) {
     await deleteDoc(doc(favsRef, docSnap.docs[0].id));
   }
 };
@@ -149,12 +152,12 @@ export const deleteFav = async (user: FirebaseUser, url: string) => {
 export const getCustomToken = async () => {
   const callable = httpsCallable(functions, 'getCustomToken');
   return await callable()
+    // biome-ignore lint: TODO
     .then((res: any) => {
       if (res.data.err) {
         return new PrettyFirebaseError(new Error(res.data.err));
-      } else {
-        return res.data.data;
       }
+      return res.data.data;
     })
     .catch((err) => {
       return new PrettyFirebaseError(err);
@@ -163,16 +166,16 @@ export const getCustomToken = async () => {
 
 export const updateBskyAccount = async (
   username: string,
-  appPassword: string
+  appPassword: string,
 ) => {
   const callable = httpsCallable(functions, 'updateBskyAccount');
   return await callable({ username, appPassword })
+    // biome-ignore lint: TODO
     .then((res: any) => {
       if (res.data.err) {
         return new PrettyFirebaseError(new Error(res.data.err));
-      } else {
-        return null;
       }
+      return null;
     })
     .catch((err) => {
       return new PrettyFirebaseError(err);
@@ -180,7 +183,7 @@ export const updateBskyAccount = async (
 };
 
 export const getGeneralSettings = async (
-  user: FirebaseUser
+  user: FirebaseUser,
 ): Promise<Settings | PrettyFirebaseError> => {
   const usersRef = collection(db, 'users');
   const userRef = doc(usersRef, user.uid);
@@ -190,15 +193,14 @@ export const getGeneralSettings = async (
     .then((docSnap) => {
       if (docSnap.exists()) {
         return docSnap.data() as Settings;
-      } else {
-        return {
-          bskyEnabled: false,
-          bskyUsername: null,
-          bskyPostSummary: false,
-          bskyPostRecords: false,
-          algoliaEnabled: false,
-        };
       }
+      return {
+        bskyEnabled: false,
+        bskyUsername: null,
+        bskyPostSummary: false,
+        bskyPostRecords: false,
+        algoliaEnabled: false,
+      };
     })
     .catch((err) => {
       return new PrettyFirebaseError(err);
@@ -207,7 +209,8 @@ export const getGeneralSettings = async (
 
 export const updateGeneralSettings = async (
   user: FirebaseUser,
-  obj: Record<string, any>
+  // biome-ignore lint: TODO
+  obj: Record<string, any>,
 ): Promise<null | PrettyFirebaseError> => {
   const usersRef = collection(db, 'users');
   const userRef = doc(usersRef, user.uid);
@@ -221,32 +224,33 @@ export const updateGeneralSettings = async (
       .catch((err) => {
         return new PrettyFirebaseError(err);
       });
-  } else {
-    return await setDoc(generalSettingsRef, obj)
-      .then(() => {
-        return null;
-      })
-      .catch((err) => {
-        return new PrettyFirebaseError(err);
-      });
   }
+  return await setDoc(generalSettingsRef, obj)
+    .then(() => {
+      return null;
+    })
+    .catch((err) => {
+      return new PrettyFirebaseError(err);
+    });
 };
 
 export const deleteBskyAccount = async (user: FirebaseUser) => {
   const callable = httpsCallable(functions, 'deleteBskyAccount');
   const res = await callable()
+    // biome-ignore lint: TODO
     .then((res: any) => {
       if (res.data.err) {
         return new PrettyFirebaseError(new Error(res.data.err));
-      } else {
-        return null;
       }
+      return null;
     })
     .catch((err) => {
       return new PrettyFirebaseError(err);
     });
 
-  if (res != null) return res;
+  if (res != null) {
+    return res;
+  }
 
   const usersRef = collection(db, 'users');
   const userRef = doc(usersRef, user.uid);
@@ -262,7 +266,7 @@ export const deleteBskyAccount = async (user: FirebaseUser) => {
 };
 
 export const getOrCreateAlgoliaSecuredApiKey = async (
-  user: FirebaseUser
+  user: FirebaseUser,
 ): Promise<string | PrettyFirebaseError> => {
   const usersRefs = collection(db, 'users');
   const userRef = doc(usersRefs, user.uid);
@@ -274,20 +278,19 @@ export const getOrCreateAlgoliaSecuredApiKey = async (
     generalSettingsSnap.data()?.algoliaApiKey
   ) {
     return generalSettingsSnap.data()?.algoliaApiKey;
-  } else {
-    return await createAlgoliaSecuredApiKey();
   }
+  return await createAlgoliaSecuredApiKey();
 };
 
 export const createAlgoliaSecuredApiKey = async () => {
   const callable = httpsCallable(functions, 'createAlgoliaSecuredApiKey');
   return await callable()
+    // biome-ignore lint: TODO
     .then((res: any) => {
       if (res.data.err) {
         return new PrettyFirebaseError(new Error(res.data.err));
-      } else {
-        return res.data.data;
       }
+      return res.data.data;
     })
     .catch((err) => {
       return new PrettyFirebaseError(err);
@@ -296,11 +299,15 @@ export const createAlgoliaSecuredApiKey = async () => {
 
 export const searchAlgolia = async (
   userKey: string,
-  term: string
+  term: string,
 ): Promise<FavRecord[]> => {
+  if (!process.env.NEXT_PUBLIC_ALGOLIA_APPLICATION_ID) {
+    throw new Error('Algolia application ID is not defined');
+  }
+
   const client = algoliasearch(
-    process.env.NEXT_PUBLIC_ALGOLIA_APPLICATION_ID!,
-    userKey
+    process.env.NEXT_PUBLIC_ALGOLIA_APPLICATION_ID,
+    userKey,
   );
   const index = client.initIndex('favs');
   const { hits } = await index.search<FavRecord>(term);

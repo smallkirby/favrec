@@ -1,6 +1,6 @@
+import { getFirestore } from 'firebase-admin/firestore';
 import { onCall } from 'firebase-functions/v2/https';
 import { isAuthed } from './auth';
-import { getFirestore } from 'firebase-admin/firestore';
 
 const firestore = getFirestore();
 
@@ -11,6 +11,12 @@ export const getFavsPaginated = onCall({ memory: '1GiB' }, async (req) => {
   if (!isAuthed(req.auth)) {
     return {
       err: 'Unauthorized',
+      data: null,
+    };
+  }
+  if (!auth || !auth.uid) {
+    return {
+      err: 'Invalid input',
       data: null,
     };
   }
@@ -25,7 +31,7 @@ export const getFavsPaginated = onCall({ memory: '1GiB' }, async (req) => {
 
   const ref = firestore
     .collection('users')
-    .doc(auth!.uid)
+    .doc(auth?.uid)
     .collection('favs')
     .orderBy('date', 'desc')
     .limit(limit)

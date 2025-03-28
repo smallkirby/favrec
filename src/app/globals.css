@@ -1,10 +1,10 @@
-@import url('https://fonts.googleapis.com/css2?family=Pacifico&family=Raleway&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Pacifico&family=Raleway&display=swap");
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 body {
-  font-family: 'Noto Sans', sans-serif;
+  font-family: "Noto Sans", sans-serif;
   font-size: 16px;
 }

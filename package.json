@@ -6,17 +6,13 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "eslint": "eslint --ext \".tsx,.ts,.jsx,.js\" --ignore-path .gitignore .",
-    "eslint:fix": "eslint --ext \".tsx,.ts,.jsx,.js\" --ignore-path .gitignore . --fix",
-    "prettier": "prettier --ignore-path .gitignore --check .",
-    "prettier:fix": "prettier --ignore-path .gitignore --write .",
-    "lint": "npm run prettier && npm run eslint",
-    "lint:fix": "npm run prettier:fix && npm run eslint:fix",
     "start": "next start",
     "emulate": "firebase emulators:start --only firestore,auth,functions --export-on-exit ./firebase-emu --import=./firebase-emu",
     "emulate:dry": "firebase emulators:start --only firestore,auth,functions",
     "test:e2e": "playwright test",
-    "test:e2e:update-data": "playwright test --update-snapshots"
+    "test:e2e:update-data": "playwright test --update-snapshots",
+    "fmt": "biome check .",
+    "fmt:fix": "biome check . --write"
   },
   "dependencies": {
     "@ant-design/cssinjs": "^1.18.1",
@@ -40,18 +36,12 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "autoprefixer": "^10.4.21",
-    "eslint": "^8",
-    "eslint-config-google": "^0.14.0",
-    "eslint-config-next": "15.2.4",
-    "eslint-config-prettier": "^10.1.1",
     "firebase-tools": "^13.35.1",
     "playwright": "^1.51.1",
     "postcss": "^8",
-    "prettier": "^3.5.3",
-    "prettier-plugin-classnames": "^0.7.7",
-    "prettier-plugin-tailwindcss": "^0.6.11",
     "tailwindcss": "^3.3.0",
     "tree-kill": "^1.2.2",
-    "typescript": "^5"
+    "typescript": "^5",
+    "@biomejs/biome": "^2.0.0-beta.1"
   }
 }

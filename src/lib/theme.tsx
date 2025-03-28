@@ -1,4 +1,4 @@
-import { ConfigProvider, ThemeConfig, theme } from 'antd';
+import { ConfigProvider, type ThemeConfig, theme } from 'antd';
 
 const darkTheme: Partial<ThemeConfig> = {
   algorithm: theme.darkAlgorithm,

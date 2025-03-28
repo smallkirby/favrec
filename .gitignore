@@ -10,8 +10,9 @@
 /coverage
 
 # next.js
-/.next/
-/out/
+# BUG: https://github.com/biomejs/biome/issues/5432
+.next
+out
 
 # production
 /build

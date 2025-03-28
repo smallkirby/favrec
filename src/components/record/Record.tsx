@@ -1,19 +1,19 @@
 'use client';
 
-import { Button, Form, Input, message } from 'antd';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
-import { FavRecord } from '@/types/FavRecord';
-import { PrettyFirebaseError, recordFav } from '@/lib/firebase/store';
-import { FirebaseAuthContext } from '@/lib/firebase/auth';
-import { useContext } from 'react';
-import { FavConfigProvider } from '@/lib/theme';
+import { Button, Form, Input, message } from 'antd';
 import { useForm } from 'antd/es/form/Form';
+import { useContext } from 'react';
+import { FirebaseAuthContext } from '@/lib/firebase/auth';
+import { PrettyFirebaseError, recordFav } from '@/lib/firebase/store';
+import { FavConfigProvider } from '@/lib/theme';
+import type { FavRecord } from '@/types/FavRecord';
 
-const validateURL = (url: string) => {
+const validateUrl = (url: string) => {
   try {
     new URL(url);
     return true;
-  } catch (e) {
+  } catch (_e) {
     return false;
   }
 };
@@ -79,7 +79,7 @@ export default function Record() {
               },
               () => ({
                 validator(_, value: string | undefined) {
-                  if (!!value && validateURL(value)) {
+                  if (!!value && validateUrl(value)) {
                     return Promise.resolve();
                   }
                   return Promise.reject(new Error('Invalid URL'));
@@ -90,7 +90,7 @@ export default function Record() {
             <Input
               placeholder="URL you read/liked"
               spellCheck={false}
-              allowClear
+              allowClear={true}
               size="large"
             />
           </Form.Item>
