@@ -13,7 +13,7 @@ jobs:
   build_and_deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Create .env file from secrets
         run: |
@@ -23,13 +23,17 @@ jobs:
         with:
           node-version: '20'
 
+      - name: Authenticate to Google Cloud
+        uses: 'google-github-actions/auth@v2'
+        with:
+          credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_FAVREC_4D401 }}
+
+      - name: Install Dependencies
+        run:
+          npm ci --no-audit
+
       - name: Build functions
         run: cd functions && npm ci --no-audit && npm run build
 
       - name: Deploy Functions and Firestore
-        uses: w9jds/firebase-action@7b6cebfa62d71e24d73832ee4b73dc1b0709f32d
-        with:
-          # `--only functions,firestore` does not work, why...?
-          args: deploy --only firestore,functions
-        env:
-          GCP_SA_KEY: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_FAVREC_4D401 }}
+        run: npx firebase deploy --only functions,firestore

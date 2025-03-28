@@ -46,6 +46,7 @@ firebase-emu
 
 # secrets
 .env
+gha-creds-*.json
 
 # tests
 /test-results
