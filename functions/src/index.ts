@@ -4,7 +4,7 @@ import { setGlobalOptions } from 'firebase-functions/v2';
 import { onCall } from 'firebase-functions/v2/https';
 import { createCustomToken, isAuthed } from './lib/auth';
 import { fetchPageInfo } from './lib/fetch';
-import type { FavRecord } from './types/FavRecord.tsx';
+import type { FavRecord } from './types/FavRecord';
 
 initializeApp();
 setGlobalOptions({ region: 'asia-northeast1' });

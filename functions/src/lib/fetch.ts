@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { JSDOM } from 'jsdom';
-import type { FavRecord } from '../types/FavRecord.tsx';
+import type { FavRecord } from '../types/FavRecord';
 
 axios.defaults.responseType = 'arraybuffer';
 axios.defaults.responseEncoding = 'binary';

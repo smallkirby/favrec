@@ -30,7 +30,7 @@ jobs:
         run: npm ci --no-audit
 
       - name: Run linter 👀
-        run: npm run lint
+        run: npm run fmt
 
       - name: Run build 🏗️
         run: npm run build
