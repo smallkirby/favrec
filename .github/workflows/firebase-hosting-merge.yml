@@ -1,9 +1,11 @@
-name: Deploy to Firebase
+name: Functions Deploy
 
 on:
   push:
     branches:
       - master
+    paths:
+      - functions/**
   workflow_dispatch:
 
 jobs:
