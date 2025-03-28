@@ -29,7 +29,10 @@ export default function LoginBox() {
   return (
     <FavConfigProvider>
       <Spin spinning={isLoading || user === undefined} fullscreen />
-      <Card className="!mx-auto !border-slate-600 text-center shadow-sm drop-shadow-md md:mx-auto md:w-96">
+      <Card
+        className="!mx-auto !border-slate-600 text-center shadow-sm drop-shadow-md md:mx-auto
+          md:w-96"
+      >
         <div className="my-2">
           <Image
             src="/logo/github-mark-white.png"
