@@ -1,4 +1,4 @@
-import { BskyAgent, RichText } from '@atproto/api';
+import { AtpAgent, RichText } from '@atproto/api';
 import { getFirestore } from 'firebase-admin/firestore';
 import { FieldValue } from 'firebase-admin/firestore';
 import { onDocumentCreated } from 'firebase-functions/firestore';
@@ -10,7 +10,7 @@ import { isAuthed } from './auth';
 const firestore = getFirestore();
 
 const checkAccountLogin = async (username: string, appPassword: string) => {
-  const agent = new BskyAgent({
+  const agent = new AtpAgent({
     service: 'https://bsky.social',
   });
 
@@ -251,7 +251,7 @@ export const onPostRecordBsky = onDocumentCreated(
     }
     const data = snapshot.data();
 
-    const agent = new BskyAgent({
+    const agent = new AtpAgent({
       service: 'https://bsky.social',
     });
     await agent.login({
@@ -265,7 +265,7 @@ export const onPostRecordBsky = onDocumentCreated(
     await rt.detectFacets(agent);
 
     const postRecord = {
-      $type: 'app.bsky.feed.post',
+      $type: 'app.bsky.feed.post' as const,
       text: rt.text,
       facets: rt.facets,
       createdAt: new Date().toISOString(),

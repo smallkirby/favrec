@@ -1,4 +1,4 @@
-import algolia from 'algoliasearch';
+import { algoliasearch } from 'algoliasearch';
 import { getFirestore } from 'firebase-admin/firestore';
 import { defineSecret } from 'firebase-functions/params';
 import {
@@ -25,9 +25,12 @@ const generateSecuredApiKey = (
   uid: string,
   profile: AlgoliaAdminProfile,
 ): string => {
-  const client = algolia(profile.applicationId, profile.adminApiKey);
-  return client.generateSecuredApiKey(profile.searchApiKey, {
-    filters: `userId:${uid}`,
+  const client = algoliasearch(profile.applicationId, profile.adminApiKey);
+  return client.generateSecuredApiKey({
+    parentApiKey: profile.searchApiKey,
+    restrictions: {
+      filters: `userId:${uid}`,
+    },
   });
 };
 
@@ -35,13 +38,11 @@ const deleteAllUserRecords = async (
   uid: string,
   profile: AlgoliaAdminProfile,
 ): Promise<void> => {
-  const client = algolia(profile.applicationId, profile.adminApiKey);
-  const index = client.initIndex('favs');
-  await index.browseObjects({
-    filters: `userId:${uid}`,
-    batch: (batch) => {
-      const objectIds = batch.map((item) => item.objectID);
-      index.deleteObjects(objectIds);
+  const client = algoliasearch(profile.applicationId, profile.adminApiKey);
+  await client.deleteBy({
+    indexName: 'favs',
+    deleteByParams: {
+      filters: `userId:${uid}`,
     },
   });
 };
@@ -63,9 +64,11 @@ const uploadAllUserRecords = async (
     userId: uid,
   }));
 
-  const client = algolia(profile.applicationId, profile.adminApiKey);
-  const index = client.initIndex('favs');
-  await index.saveObjects(favs);
+  const client = algoliasearch(profile.applicationId, profile.adminApiKey);
+  await client.saveObjects({
+    indexName: 'favs',
+    objects: favs,
+  });
 };
 
 const dbGetSecuredApiKey = async (
@@ -235,16 +238,18 @@ export const onAlgoliaRecordCreated = onDocumentCreated(
       return null;
     }
 
-    const client = algolia(
+    const client = algoliasearch(
       process.env.ALGOLIA_APPLICATION_ID,
       process.env.ALGOLIA_ADMIN_API_KEY,
     );
-    const index = client.initIndex('favs');
-    await index.saveObject({
-      ...fav,
-      date: fav.date.toDate().getTime(),
-      userId: params.uid,
-      objectID: snapshot.id,
+    await client.saveObject({
+      indexName: 'favs',
+      body: {
+        ...fav,
+        date: fav.date.toDate().getTime(),
+        userId: params.uid,
+        objectID: snapshot.id,
+      },
     });
 
     return null;
@@ -283,17 +288,13 @@ export const onAlgoliaRecordDeleted = onDocumentDeleted(
       return null;
     }
 
-    const client = algolia(
+    const client = algoliasearch(
       process.env.ALGOLIA_APPLICATION_ID,
       process.env.ALGOLIA_ADMIN_API_KEY,
     );
-    const index = client.initIndex('favs');
-    await index.browseObjects({
-      filters: `objectID:${snapshot.id}`,
-      batch: async (batch) => {
-        const objectIds = batch.map((item) => item.objectID);
-        await index.deleteObjects(objectIds);
-      },
+    await client.deleteObject({
+      indexName: 'favs',
+      objectID: snapshot.id,
     });
 
     return null;
