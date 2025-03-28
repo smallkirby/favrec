@@ -1,38 +1,38 @@
-import * as admin from 'firebase-admin';
-import * as functions from 'firebase-functions';
+import { onCall } from 'firebase-functions/v2/https';
+import { setGlobalOptions } from 'firebase-functions/v2';
 import { createCustomToken, isAuthed } from './lib/auth';
 import { fetchPageInfo } from './lib/fetch';
 import { FavRecord } from './types/FavRecord';
+import { getFirestore } from 'firebase-admin/firestore';
+import { initializeApp } from 'firebase-admin/app';
 
-const firestore = admin.firestore;
+initializeApp();
+setGlobalOptions({ region: 'asia-northeast1' });
 
-admin.initializeApp(functions.config().firebase);
+const firestore = getFirestore();
 
 type ResultType = {
   err: string | null;
   data: any;
 };
 
-export const updatePageInfo = functions
-  .region('asia-northeast1')
-  .runWith({
-    memory: '1GB',
-  })
-  .https.onCall(async (data, context): Promise<ResultType> => {
-    if (!isAuthed(context.auth)) {
+export const updatePageInfo = onCall(
+  { memory: '1GiB' },
+  async (req): Promise<ResultType> => {
+    const auth = req.auth;
+    const data = req.data;
+
+    if (!isAuthed(auth)) {
       return {
         err: 'Unauthorized',
         data: null,
       };
     }
 
-    const uid = context.auth!.uid;
+    const uid = auth!.uid;
     const { url } = data;
 
-    const favsRefs = firestore()
-      .collection('users')
-      .doc(uid)
-      .collection('favs');
+    const favsRefs = firestore.collection('users').doc(uid).collection('favs');
     const docQuery = favsRefs.where('url', '==', url);
     const doc = await docQuery.get().then((snapshot) => {
       if (snapshot.empty) return null;
@@ -76,30 +76,26 @@ export const updatePageInfo = functions
         date: record.date.getTime(),
       },
     };
-  });
+  }
+);
 
-// NOTE: functions v2 currently has a bug that cannot pass `auth` to `onCall` function.
-// https://github.com/firebase/firebase-tools/issues/5210
-export const recordPageInfo = functions
-  .region('asia-northeast1')
-  .runWith({
-    memory: '1GB',
-  })
-  .https.onCall(async (data, context): Promise<ResultType> => {
-    if (!isAuthed(context.auth)) {
+export const recordPageInfo = onCall(
+  { memory: '1GiB' },
+  async (req): Promise<ResultType> => {
+    const auth = req.auth;
+    const data = req.data;
+
+    if (!isAuthed(auth)) {
       return {
         err: 'Unauthorized',
         data: null,
       };
     }
 
-    const uid = context.auth!.uid;
+    const uid = auth!.uid;
     const { url } = data;
 
-    const favsRefs = firestore()
-      .collection('users')
-      .doc(uid)
-      .collection('favs');
+    const favsRefs = firestore.collection('users').doc(uid).collection('favs');
     const exist = await favsRefs
       .where('url', '==', url)
       .get()
@@ -124,7 +120,7 @@ export const recordPageInfo = functions
       date: new Date(),
     };
 
-    const err = await firestore()
+    const err = await firestore
       .collection('users')
       .doc(uid)
       .collection('favs')
@@ -142,27 +138,28 @@ export const recordPageInfo = functions
       err: null,
       data: null, // TODO
     };
-  });
+  }
+);
 
-export const getCustomToken = functions
-  .region('asia-northeast1')
-  .runWith({
-    memory: '1GB',
-  })
-  .https.onCall(async (_, context): Promise<ResultType> => {
-    if (!isAuthed(context.auth)) {
+export const getCustomToken = onCall(
+  { memory: '1GiB' },
+  async (req): Promise<ResultType> => {
+    const auth = req.auth;
+
+    if (!isAuthed(auth)) {
       return {
         err: 'Unauthorized',
         data: null,
       };
     }
 
-    const token = await createCustomToken(context.auth!.uid);
+    const token = await createCustomToken(auth!.uid);
     return {
       err: null,
       data: token,
     };
-  });
+  }
+);
 
 export {
   updateBskyAccount,

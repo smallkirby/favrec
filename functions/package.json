@@ -10,20 +10,20 @@
     "logs": "firebase functions:log"
   },
   "engines": {
-    "node": "18"
+    "node": "20"
   },
   "main": "lib/index.js",
   "dependencies": {
     "@atproto/api": "^0.7.3",
-    "@types/jsdom": "^21.1.6",
+    "@types/jsdom": "^21.1.7",
     "algoliasearch": "^4.22.0",
-    "axios": "^1.6.2",
+    "axios": "^1.8.4",
     "dayjs": "^1.11.13",
-    "firebase-admin": "^12.2.0",
-    "firebase-functions": "^4.3.1",
+    "firebase-admin": "^13.2.0",
+    "firebase-functions": "^6.3.2",
     "jsdom": "^26.0.0",
     "open-graph-scraper": "^6.9.0",
-    "sharp": "^0.33.0"
+    "sharp": "^0.33.5"
   },
   "devDependencies": {
     "@types/algoliasearch": "^4.0.0",

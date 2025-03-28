@@ -1,10 +1,13 @@
 import { BskyAgent, RichText } from '@atproto/api';
-import * as functions from 'firebase-functions';
-import * as admin from 'firebase-admin';
+import { onCall } from 'firebase-functions/v2/https';
+import { onDocumentCreated } from 'firebase-functions/firestore';
+import { getFirestore } from 'firebase-admin/firestore';
 import { FieldValue } from 'firebase-admin/firestore';
 import { isAuthed } from './auth';
 import ogs from 'open-graph-scraper';
 import sharp from 'sharp';
+
+const firestore = getFirestore();
 
 const checkAccountLogin = async (username: string, appPassword: string) => {
   const agent = new BskyAgent({
@@ -23,8 +26,10 @@ const checkAccountLogin = async (username: string, appPassword: string) => {
 };
 
 const canPostRecord = async (uid: string): Promise<boolean> => {
-  const db = admin.firestore;
-  const settingsRefs = db().collection('users').doc(uid).collection('settings');
+  const settingsRefs = firestore
+    .collection('users')
+    .doc(uid)
+    .collection('settings');
   const generalRefs = settingsRefs.doc('general');
   const generalSnap = await generalRefs.get();
 
@@ -38,8 +43,10 @@ const getBskyCredential = async (
   username: string;
   password: string;
 }> => {
-  const db = admin.firestore;
-  const settingsRefs = db().collection('users').doc(uid).collection('settings');
+  const settingsRefs = firestore
+    .collection('users')
+    .doc(uid)
+    .collection('settings');
   const integRefs = settingsRefs.doc('integrations');
   const integSnap = await integRefs.get();
 
@@ -108,8 +115,10 @@ const registerPrifileFirestore = async (
   appPassword: string,
   uid: string
 ) => {
-  const db = admin.firestore;
-  const settingsRefs = db().collection('users').doc(uid).collection('settings');
+  const settingsRefs = firestore
+    .collection('users')
+    .doc(uid)
+    .collection('settings');
   const integRefs = settingsRefs.doc('integrations');
   const err = await integRefs
     .set(
@@ -136,82 +145,40 @@ const registerPrifileFirestore = async (
     .catch((e) => e);
 };
 
-export const updateBskyAccount = functions
-  .region('asia-northeast1')
-  .runWith({
-    memory: '1GB',
-  })
-  .https.onCall(async (data, context) => {
-    if (!isAuthed(context.auth)) {
-      return {
-        err: 'Unauthorized',
-        data: null,
-      };
-    }
+export const updateBskyAccount = onCall({ memory: '1GiB' }, async (req) => {
+  const auth = req.auth;
+  const data = req.data;
 
-    const { username, appPassword } = data;
-    if (!username || !appPassword) {
-      return {
-        err: 'Invalid input',
-        data: null,
-      };
-    }
+  if (!isAuthed(auth)) {
+    return {
+      err: 'Unauthorized',
+      data: null,
+    };
+  }
 
-    const success = await checkAccountLogin(username, appPassword);
-    if (!success) {
-      return {
-        err: 'Failed to login to Bluesky',
-        data: null,
-      };
-    } else {
-      const err = await registerPrifileFirestore(
-        username,
-        appPassword,
-        context.auth!.uid
-      );
-      if (err) {
-        return {
-          err: 'Failed to register profile to DB.',
-          data: null,
-        };
-      } else {
-        return {
-          err: null,
-          data: null,
-        };
-      }
-    }
-  });
+  const { username, appPassword } = data;
+  if (!username || !appPassword) {
+    return {
+      err: 'Invalid input',
+      data: null,
+    };
+  }
 
-export const deleteBskyAccount = functions
-  .region('asia-northeast1')
-  .runWith({
-    memory: '1GB',
-  })
-  .https.onCall(async (data, context) => {
-    if (!isAuthed(context.auth)) {
-      return {
-        err: 'Unauthorized',
-        data: null,
-      };
-    }
-
-    const db = admin.firestore;
-    const settingsRefs = db()
-      .collection('users')
-      .doc(context.auth!.uid)
-      .collection('settings');
-    const integRefs = settingsRefs.doc('integrations');
-    const err = await integRefs
-      .update({
-        bskyAppPassword: FieldValue.delete(),
-      })
-      .then(() => null)
-      .catch((e) => e);
-
+  const success = await checkAccountLogin(username, appPassword);
+  if (!success) {
+    return {
+      err: 'Failed to login to Bluesky',
+      data: null,
+    };
+  } else {
+    const err = await registerPrifileFirestore(
+      username,
+      appPassword,
+      auth!.uid
+    );
     if (err) {
       return {
-        err: 'Failed to delete app password',
+        err: 'Failed to register profile to DB.',
         data: null,
       };
     } else {
@@ -220,21 +187,60 @@ export const deleteBskyAccount = functions
         data: null,
       };
     }
-  });
+  }
+});
 
-export const onPostRecordBsky = functions.firestore
-  .document('users/{uid}/favs/{fid}')
-  .onCreate(async (snap, context) => {
-    if (!(await canPostRecord(context.params.uid))) {
+export const deleteBskyAccount = onCall({ memory: '1GiB' }, async (req) => {
+  const auth = req.auth;
+
+  if (!isAuthed(auth)) {
+    return {
+      err: 'Unauthorized',
+      data: null,
+    };
+  }
+
+  const settingsRefs = firestore
+    .collection('users')
+    .doc(auth!.uid)
+    .collection('settings');
+  const integRefs = settingsRefs.doc('integrations');
+  const err = await integRefs
+    .update({
+      bskyAppPassword: FieldValue.delete(),
+    })
+    .then(() => null)
+    .catch((e) => e);
+
+  if (err) {
+    return {
+      err: 'Failed to delete app password',
+      data: null,
+    };
+  } else {
+    return {
+      err: null,
+      data: null,
+    };
+  }
+});
+
+export const onPostRecordBsky = onDocumentCreated(
+  'users/{uid}/favs/{fid}',
+  async (event) => {
+    const params = event.params;
+
+    if (!(await canPostRecord(params.uid))) {
       return null;
     }
 
-    const { username, password } = await getBskyCredential(context.params.uid);
+    const { username, password } = await getBskyCredential(params.uid);
 
-    const record = snap.data();
-    if (!record) {
+    const snapshot = event.data;
+    if (!snapshot) {
       return;
     }
+    const data = snapshot.data();
 
     const agent = new BskyAgent({
       service: 'https://bsky.social',
@@ -244,9 +250,9 @@ export const onPostRecordBsky = functions.firestore
       password,
     });
 
-    const image = await getOgImageFromUrl(record.url, record.imageUrl);
+    const image = await getOgImageFromUrl(data.url, data.imageUrl);
 
-    const rt = new RichText({ text: `I'm reading ${record.url}` });
+    const rt = new RichText({ text: `I'm reading ${data.url}` });
     await rt.detectFacets(agent);
 
     const postRecord = {
@@ -257,9 +263,9 @@ export const onPostRecordBsky = functions.firestore
       embed: {
         $type: 'app.bsky.embed.external',
         external: {
-          uri: record.url,
-          title: record.title,
-          description: record.description,
+          uri: data.url,
+          title: data.title,
+          description: data.description,
         },
       },
     };
@@ -282,4 +288,5 @@ export const onPostRecordBsky = functions.firestore
     await agent.post(postRecord);
 
     return null;
-  });
+  }
+);

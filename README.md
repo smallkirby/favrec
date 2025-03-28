@@ -2,7 +2,8 @@
 
 ![Lint](https://github.com/smallkirby/favrec/actions/workflows/lint.yml/badge.svg)
 ![Test](https://github.com/smallkirby/favrec/actions/workflows/test.yml/badge.svg)
-![Deploy](https://github.com/smallkirby/favrec/actions/workflows/firebase-hosting-merge.yml/badge.svg)
+![Deploy Hosting](https://github.com/smallkirby/favrec/actions/workflows/firebase-hosting.yml/badge.svg)
+![Deploy Functions](https://github.com/smallkirby/favrec/actions/workflows/firebase-functions.yml/badge.svg)
 
 ## Development
 
@@ -34,6 +35,11 @@ Data is imported/exported from/to `./emulator-data` directory.
 ## Deployment
 
 All the three components are deployed to Firebase using GitHub Actions with the service account.
+
+```sh
+# functions
+npx firebase deploy --only functions
+```
 
 ## Notes / Known Issues
 

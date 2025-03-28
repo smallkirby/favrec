@@ -1,54 +1,52 @@
-import * as functions from 'firebase-functions';
+import { onCall } from 'firebase-functions/v2/https';
 import { isAuthed } from './auth';
 import { getFirestore } from 'firebase-admin/firestore';
 
 const firestore = getFirestore();
 
-export const getFavsPaginated = functions
-  .region('asia-northeast1')
-  .runWith({
-    memory: '1GB',
-  })
-  .https.onCall(async (data, context) => {
-    if (!isAuthed(context.auth)) {
+export const getFavsPaginated = onCall({ memory: '1GiB' }, async (req) => {
+  const auth = req.auth;
+  const data = req.data;
+
+  if (!isAuthed(req.auth)) {
+    return {
+      err: 'Unauthorized',
+      data: null,
+    };
+  }
+
+  const { page, limit } = data;
+  if (page === undefined || limit === undefined) {
+    return {
+      err: 'Invalid input',
+      data: null,
+    };
+  }
+
+  const ref = firestore
+    .collection('users')
+    .doc(auth!.uid)
+    .collection('favs')
+    .orderBy('date', 'desc')
+    .limit(limit)
+    .offset(page * limit);
+  return await ref
+    .get()
+    .then((snap) => {
       return {
-        err: 'Unauthorized',
+        err: null,
+        data: snap.docs.map((doc) => {
+          return {
+            ...doc.data(),
+            date: doc.data().date.toDate().toISOString(),
+          };
+        }),
+      };
+    })
+    .catch((err) => {
+      return {
+        err: err.message,
         data: null,
       };
-    }
-
-    const { page, limit } = data;
-    if (page === undefined || limit === undefined) {
-      return {
-        err: 'Invalid input',
-        data: null,
-      };
-    }
-
-    const ref = firestore
-      .collection('users')
-      .doc(context.auth!.uid)
-      .collection('favs')
-      .orderBy('date', 'desc')
-      .limit(limit)
-      .offset(page * limit);
-    return await ref
-      .get()
-      .then((snap) => {
-        return {
-          err: null,
-          data: snap.docs.map((doc) => {
-            return {
-              ...doc.data(),
-              date: doc.data().date.toDate().toISOString(),
-            };
-          }),
-        };
-      })
-      .catch((err) => {
-        return {
-          err: err.message,
-          data: null,
-        };
-      });
-  });
+    });
+});
