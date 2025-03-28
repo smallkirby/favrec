@@ -1,19 +1,19 @@
 'use client';
 
+import { Search } from '@mui/icons-material';
+import { Input, Modal, message, Spin } from 'antd';
+import { useRouter } from 'next/navigation';
+import { useContext, useEffect, useState } from 'react';
 import FavListing from '@/components/record/FavListing';
-import { SettingsContext } from '@/lib/SettingsProvider';
 import { FirebaseAuthContext } from '@/lib/firebase/auth';
 import {
   getGeneralSettings,
   getOrCreateAlgoliaSecuredApiKey,
   searchAlgolia,
 } from '@/lib/firebase/store';
+import { SettingsContext } from '@/lib/SettingsProvider';
 import { FavConfigProvider } from '@/lib/theme';
-import { FavRecord } from '@/types/FavRecord';
-import { Search } from '@mui/icons-material';
-import { Input, Modal, Spin, message } from 'antd';
-import { useRouter } from 'next/navigation';
-import { useContext, useEffect, useState } from 'react';
+import type { FavRecord } from '@/types/FavRecord';
 
 export default function SearchPage() {
   const [messageApi, contextHolder] = message.useMessage();
@@ -45,17 +45,13 @@ export default function SearchPage() {
 
   const fetchRecords = async (
     page: number,
-    limit: number
+    limit: number,
   ): Promise<FavRecord[]> => {
     return records.slice(page * limit, (page + 1) * limit) as FavRecord[];
   };
 
-  const onRemove = async (url: string) => {
-    console.log('TODO');
-  };
-  const onUpdate = async (url: string) => {
-    console.log('TODO');
-  };
+  const onRemove = async (_url: string) => {};
+  const onUpdate = async (_url: string) => {};
 
   useEffect(() => {
     if (user) {
@@ -71,7 +67,7 @@ export default function SearchPage() {
       router.push('/login');
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [setSettings, settings, user]);
+  }, [setSettings, settings, user, router.push]);
 
   useEffect(() => {
     if (user) {
@@ -99,13 +95,13 @@ export default function SearchPage() {
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user]);
+  }, [user, messageApi.error, modal.error, router.push]);
 
   return (
     <FavConfigProvider>
       {contextHolder}
       {modalContextHolder}
-      <Spin spinning={apiKey === undefined || loading} fullscreen />
+      <Spin spinning={apiKey === undefined || loading} fullscreen={true} />
 
       <div className="mx-auto w-full text-center md:w-2/3">
         <Input
@@ -122,7 +118,7 @@ export default function SearchPage() {
             numRecords={numRecords}
             onRemove={onRemove}
             onUpdate={onUpdate}
-            notAllowEdit
+            notAllowEdit={true}
           />
         </div>
       </div>

@@ -1,10 +1,10 @@
-import { onCall } from 'firebase-functions/v2/https';
+import { initializeApp } from 'firebase-admin/app';
+import { getFirestore } from 'firebase-admin/firestore';
 import { setGlobalOptions } from 'firebase-functions/v2';
+import { onCall } from 'firebase-functions/v2/https';
 import { createCustomToken, isAuthed } from './lib/auth';
 import { fetchPageInfo } from './lib/fetch';
-import { FavRecord } from './types/FavRecord';
-import { getFirestore } from 'firebase-admin/firestore';
-import { initializeApp } from 'firebase-admin/app';
+import type { FavRecord } from './types/FavRecord.tsx';
 
 initializeApp();
 setGlobalOptions({ region: 'asia-northeast1' });
@@ -13,6 +13,7 @@ const firestore = getFirestore();
 
 type ResultType = {
   err: string | null;
+  // biome-ignore lint: TODO
   data: any;
 };
 
@@ -29,13 +30,21 @@ export const updatePageInfo = onCall(
       };
     }
 
-    const uid = auth!.uid;
+    if (!auth || !auth.uid) {
+      return {
+        err: 'Invalid input',
+        data: null,
+      };
+    }
+    const uid = auth.uid;
     const { url } = data;
 
     const favsRefs = firestore.collection('users').doc(uid).collection('favs');
     const docQuery = favsRefs.where('url', '==', url);
     const doc = await docQuery.get().then((snapshot) => {
-      if (snapshot.empty) return null;
+      if (snapshot.empty) {
+        return null;
+      }
       return snapshot.docs[0];
     });
     if (doc === null) {
@@ -55,7 +64,7 @@ export const updatePageInfo = onCall(
 
     const record: FavRecord = {
       ...page,
-      date: doc.data()!.date.toDate(),
+      date: doc.data()?.date.toDate(),
     };
 
     const err = await doc.ref
@@ -76,7 +85,7 @@ export const updatePageInfo = onCall(
         date: record.date.getTime(),
       },
     };
-  }
+  },
 );
 
 export const recordPageInfo = onCall(
@@ -92,7 +101,14 @@ export const recordPageInfo = onCall(
       };
     }
 
-    const uid = auth!.uid;
+    if (!auth || !auth.uid) {
+      return {
+        err: 'Invalid input',
+        data: null,
+      };
+    }
+    const uid = auth.uid;
+
     const { url } = data;
 
     const favsRefs = firestore.collection('users').doc(uid).collection('favs');
@@ -138,7 +154,7 @@ export const recordPageInfo = onCall(
       err: null,
       data: null, // TODO
     };
-  }
+  },
 );
 
 export const getCustomToken = onCall(
@@ -153,19 +169,20 @@ export const getCustomToken = onCall(
       };
     }
 
-    const token = await createCustomToken(auth!.uid);
+    if (!auth || !auth.uid) {
+      return {
+        err: 'Invalid input',
+        data: null,
+      };
+    }
+
+    const token = await createCustomToken(auth.uid);
     return {
       err: null,
       data: token,
     };
-  }
+  },
 );
-
-export {
-  updateBskyAccount,
-  deleteBskyAccount,
-  onPostRecordBsky,
-} from './lib/bsky';
 
 export {
   createAlgoliaSecuredApiKey,
@@ -173,5 +190,10 @@ export {
   onAlgoliaRecordCreated,
   onAlgoliaRecordDeleted,
 } from './lib/algolia';
+export {
+  deleteBskyAccount,
+  onPostRecordBsky,
+  updateBskyAccount,
+} from './lib/bsky';
 
 export { getFavsPaginated } from './lib/get';

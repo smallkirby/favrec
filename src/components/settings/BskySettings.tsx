@@ -1,17 +1,17 @@
 'use client';
 
+import WarningIcon from '@mui/icons-material/Warning';
+import { Button, Checkbox, Collapse, Form, Input, message, Switch } from 'antd';
+import { useForm } from 'antd/es/form/Form';
+import { useEffect, useState } from 'react';
 import {
   deleteBskyAccount,
   updateBskyAccount,
   updateGeneralSettings,
 } from '@/lib/firebase/store';
 import { FavConfigProvider } from '@/lib/theme';
-import { FirebaseUser } from '@/types/FirebaseUser';
-import { Settings } from '@/types/Settings';
-import { Button, Checkbox, Collapse, Form, Input, Switch, message } from 'antd';
-import { useForm } from 'antd/es/form/Form';
-import { useEffect, useState } from 'react';
-import WarningIcon from '@mui/icons-material/Warning';
+import type { FirebaseUser } from '@/types/FirebaseUser';
+import type { Settings } from '@/types/Settings';
 
 type Props = {
   user: FirebaseUser;
@@ -32,7 +32,9 @@ const BskyAccountPanel = ({ user, settings, disabled }: Props) => {
   const onUpdateAccount = async (values: FieldType) => {
     const key = 'updateBskyAccount';
 
-    if (!values.username || !values.appPassword) return;
+    if (!(values.username && values.appPassword)) {
+      return;
+    }
 
     messageApi.open({
       content: 'Updating Bluesky profile...',
@@ -75,9 +77,7 @@ const BskyAccountPanel = ({ user, settings, disabled }: Props) => {
             <Form.Item<FieldType>
               label="Username"
               name="username"
-              initialValue={
-                settings && settings.bskyUsername ? settings.bskyUsername : ''
-              }
+              initialValue={settings?.bskyUsername ? settings.bskyUsername : ''}
               rules={[
                 {
                   required: true,
@@ -139,10 +139,10 @@ const BskyAccountPanel = ({ user, settings, disabled }: Props) => {
 export default function BskySettings({ user, settings }: Props) {
   const [isEnabled, setIsEnabled] = useState(settings.bskyEnabled === true);
   const [postRecords, setPostRecords] = useState(
-    settings.bskyPostRecords === true
+    settings.bskyPostRecords === true,
   );
   const [postSummary, setPostSummary] = useState(
-    settings.bskyPostSummary === true
+    settings.bskyPostSummary === true,
   );
   const [removingAccount, setRemovingAccount] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
@@ -181,7 +181,6 @@ export default function BskySettings({ user, settings }: Props) {
       bskyPostSummary: postSummary,
     }).then((res) => {
       if (res instanceof Error) {
-        console.error(res);
       }
     });
   }, [isEnabled, postRecords, postSummary, user]);
@@ -206,6 +205,7 @@ export default function BskySettings({ user, settings }: Props) {
             href="https://bsky.app/"
             target="_blank"
             className="text-pink-500 underline"
+            rel="noreferrer"
           >
             Bluesky
           </a>
@@ -276,7 +276,7 @@ export default function BskySettings({ user, settings }: Props) {
 
       <div className="my-4 flex">
         <Button
-          danger
+          danger={true}
           className="mx-auto border-blue-300 font-bold text-yellow-500"
           disabled={!settings.bskyUsername}
           loading={removingAccount}

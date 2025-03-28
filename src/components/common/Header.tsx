@@ -1,8 +1,9 @@
 'use client';
 
-import UserBadge from '@/components/common/UserBadge';
-import { useRouter } from 'next/navigation';
 import FavoriteIcon from '@mui/icons-material/Favorite';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import UserBadge from '@/components/common/UserBadge';
 import HeadMenu from './Menu';
 
 export default function Header() {
@@ -11,10 +12,11 @@ export default function Header() {
   return (
     <header className="navbar mb-4">
       <div className="flex items-center justify-between px-4 pt-2">
-        <a href="/">
+        <Link href="/">
           <button
-            className="group flex cursor-pointer items-center border-none bg-slate-800
-            py-0 font-cute text-pink-500 duration-300 hover:text-pink-800"
+            type="button"
+            className="group flex cursor-pointer items-center border-none bg-slate-800 py-0 font-cute
+              text-pink-500 duration-300 hover:text-pink-800"
             onClick={() => router.push('/')}
           >
             <h1 className="mr-1 text-lg">FAVREC</h1>
@@ -23,7 +25,7 @@ export default function Header() {
               className="pb-[1px] group-hover:animate-ping"
             />
           </button>
-        </a>
+        </Link>
 
         <div className="ml-8 hidden flex-1 pr-4 md:block">
           <HeadMenu />

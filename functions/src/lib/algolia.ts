@@ -1,13 +1,13 @@
 import algolia from 'algoliasearch';
-import { isAuthed } from './auth';
-import { onCall } from 'firebase-functions/v2/https';
 import { getFirestore } from 'firebase-admin/firestore';
+import { defineSecret } from 'firebase-functions/params';
 import {
   onDocumentCreated,
   onDocumentDeleted,
   onDocumentUpdated,
 } from 'firebase-functions/v2/firestore';
-import { defineSecret } from 'firebase-functions/params';
+import { onCall } from 'firebase-functions/v2/https';
+import { isAuthed } from './auth';
 
 const algoliaSearchApiKey = defineSecret('ALGOLIA_SEARCH_API_KEY');
 const algoliaAdminApiKey = defineSecret('ALGOLIA_ADMIN_API_KEY');
@@ -23,7 +23,7 @@ type AlgoliaAdminProfile = {
 
 const generateSecuredApiKey = (
   uid: string,
-  profile: AlgoliaAdminProfile
+  profile: AlgoliaAdminProfile,
 ): string => {
   const client = algolia(profile.applicationId, profile.adminApiKey);
   return client.generateSecuredApiKey(profile.searchApiKey, {
@@ -33,7 +33,7 @@ const generateSecuredApiKey = (
 
 const deleteAllUserRecords = async (
   uid: string,
-  profile: AlgoliaAdminProfile
+  profile: AlgoliaAdminProfile,
 ): Promise<void> => {
   const client = algolia(profile.applicationId, profile.adminApiKey);
   const index = client.initIndex('favs');
@@ -48,7 +48,7 @@ const deleteAllUserRecords = async (
 
 const uploadAllUserRecords = async (
   uid: string,
-  profile: AlgoliaAdminProfile
+  profile: AlgoliaAdminProfile,
 ): Promise<void> => {
   const favsRefs = firestore
     .collection('users')
@@ -70,7 +70,7 @@ const uploadAllUserRecords = async (
 
 const dbGetSecuredApiKey = async (
   uid: string,
-  profile: AlgoliaAdminProfile
+  profile: AlgoliaAdminProfile,
 ): Promise<string | null> => {
   const generalSnap = await firestore
     .collection('users')
@@ -81,7 +81,7 @@ const dbGetSecuredApiKey = async (
 
   if (generalSnap.exists) {
     const data = generalSnap.data();
-    if (data && data.algoliaSecuredApiKey) {
+    if (data?.algoliaSecuredApiKey) {
       return data.algoliaSecuredApiKey;
     }
   }
@@ -108,11 +108,10 @@ const canUseAlgolia = async (uid: string): Promise<boolean> => {
   const generalRefs = settingsRefs.doc('general');
   const generalSnap = await generalRefs.get();
 
-  if (generalSnap.exists && generalSnap.data()!.algoliaEnabled) {
+  if (generalSnap.exists && generalSnap.data()?.algoliaEnabled) {
     return true;
-  } else {
-    return false;
   }
+  return false;
 };
 
 export const createAlgoliaSecuredApiKey = onCall(
@@ -130,22 +129,40 @@ export const createAlgoliaSecuredApiKey = onCall(
       };
     }
 
-    if ((await canUseAlgolia(auth!.uid)) === false) {
+    if (!auth || !auth.uid) {
+      return {
+        err: 'Invalid input',
+        data: null,
+      };
+    }
+
+    if ((await canUseAlgolia(auth.uid)) === false) {
       return {
         err: 'Algolia integration is not  allowed by the user.',
         data: null,
       };
     }
 
+    if (
+      !process.env.ALGOLIA_APPLICATION_ID ||
+      !process.env.ALGOLIA_ADMIN_API_KEY ||
+      !process.env.ALGOLIA_SEARCH_API_KEY
+    ) {
+      return {
+        err: 'Unexpected error.',
+        data: null,
+      };
+    }
+
     return {
       err: null,
-      data: await dbGetSecuredApiKey(auth!.uid, {
-        applicationId: process.env.ALGOLIA_APPLICATION_ID!,
-        adminApiKey: process.env.ALGOLIA_ADMIN_API_KEY!,
-        searchApiKey: process.env.ALGOLIA_SEARCH_API_KEY!,
+      data: await dbGetSecuredApiKey(auth?.uid, {
+        applicationId: process.env.ALGOLIA_APPLICATION_ID,
+        adminApiKey: process.env.ALGOLIA_ADMIN_API_KEY,
+        searchApiKey: process.env.ALGOLIA_SEARCH_API_KEY,
       }),
     };
-  }
+  },
 );
 
 export const onAlgoliaIntegrationChanged = onDocumentUpdated(
@@ -160,12 +177,20 @@ export const onAlgoliaIntegrationChanged = onDocumentUpdated(
     }
     const params = event.params;
 
+    if (
+      !process.env.ALGOLIA_APPLICATION_ID ||
+      !process.env.ALGOLIA_ADMIN_API_KEY ||
+      !process.env.ALGOLIA_SEARCH_API_KEY
+    ) {
+      return;
+    }
+
     const before = data.before.data();
     const after = data.after.data();
     const profile = {
-      applicationId: process.env.ALGOLIA_APPLICATION_ID!,
-      adminApiKey: process.env.ALGOLIA_ADMIN_API_KEY!,
-      searchApiKey: process.env.ALGOLIA_SEARCH_API_KEY!,
+      applicationId: process.env.ALGOLIA_APPLICATION_ID,
+      adminApiKey: process.env.ALGOLIA_ADMIN_API_KEY,
+      searchApiKey: process.env.ALGOLIA_SEARCH_API_KEY,
     };
     if (before && after && !before.algoliaEnabled && after.algoliaEnabled) {
       // Enabled
@@ -179,7 +204,7 @@ export const onAlgoliaIntegrationChanged = onDocumentUpdated(
       // Disabled
       await deleteAllUserRecords(params.uid, profile);
     }
-  }
+  },
 );
 
 export const onAlgoliaRecordCreated = onDocumentCreated(
@@ -203,9 +228,16 @@ export const onAlgoliaRecordCreated = onDocumentCreated(
       return null;
     }
 
+    if (
+      !process.env.ALGOLIA_APPLICATION_ID ||
+      !process.env.ALGOLIA_ADMIN_API_KEY
+    ) {
+      return null;
+    }
+
     const client = algolia(
-      process.env.ALGOLIA_APPLICATION_ID!,
-      process.env.ALGOLIA_ADMIN_API_KEY!
+      process.env.ALGOLIA_APPLICATION_ID,
+      process.env.ALGOLIA_ADMIN_API_KEY,
     );
     const index = client.initIndex('favs');
     await index.saveObject({
@@ -216,7 +248,7 @@ export const onAlgoliaRecordCreated = onDocumentCreated(
     });
 
     return null;
-  }
+  },
 );
 
 export const onAlgoliaRecordDeleted = onDocumentDeleted(
@@ -244,9 +276,16 @@ export const onAlgoliaRecordDeleted = onDocumentDeleted(
       return null;
     }
 
+    if (
+      !process.env.ALGOLIA_APPLICATION_ID ||
+      !process.env.ALGOLIA_ADMIN_API_KEY
+    ) {
+      return null;
+    }
+
     const client = algolia(
-      process.env.ALGOLIA_APPLICATION_ID!,
-      process.env.ALGOLIA_ADMIN_API_KEY!
+      process.env.ALGOLIA_APPLICATION_ID,
+      process.env.ALGOLIA_ADMIN_API_KEY,
     );
     const index = client.initIndex('favs');
     await index.browseObjects({
@@ -258,5 +297,5 @@ export const onAlgoliaRecordDeleted = onDocumentDeleted(
     });
 
     return null;
-  }
+  },
 );

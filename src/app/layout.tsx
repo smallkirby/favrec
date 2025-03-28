@@ -1,10 +1,10 @@
 import '@/app/globals.css';
+import type { Metadata } from 'next';
 import Header from '@/components/common/Header';
 import StyledComponentsRegistry from '@/lib/AntdRegistry';
-import { SettingsProvider } from '@/lib/SettingsProvider';
 import { FirebaseAuthProvider } from '@/lib/firebase/auth';
+import { SettingsProvider } from '@/lib/SettingsProvider';
 import { FavConfigProvider } from '@/lib/theme';
-import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'FavRec',

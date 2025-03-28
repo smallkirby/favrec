@@ -1,11 +1,11 @@
 import { BskyAgent, RichText } from '@atproto/api';
-import { onCall } from 'firebase-functions/v2/https';
-import { onDocumentCreated } from 'firebase-functions/firestore';
 import { getFirestore } from 'firebase-admin/firestore';
 import { FieldValue } from 'firebase-admin/firestore';
-import { isAuthed } from './auth';
+import { onDocumentCreated } from 'firebase-functions/firestore';
+import { onCall } from 'firebase-functions/v2/https';
 import ogs from 'open-graph-scraper';
 import sharp from 'sharp';
+import { isAuthed } from './auth';
 
 const firestore = getFirestore();
 
@@ -20,7 +20,7 @@ const checkAccountLogin = async (username: string, appPassword: string) => {
       password: appPassword,
     });
     return res.success;
-  } catch (e) {
+  } catch (_e) {
     return false;
   }
 };
@@ -34,11 +34,11 @@ const canPostRecord = async (uid: string): Promise<boolean> => {
   const generalSnap = await generalRefs.get();
 
   const general = generalSnap.data();
-  return general && general.bskyUsername && general.bskyPostRecords;
+  return general?.bskyUsername && general.bskyPostRecords;
 };
 
 const getBskyCredential = async (
-  uid: string
+  uid: string,
 ): Promise<{
   username: string;
   password: string;
@@ -51,7 +51,7 @@ const getBskyCredential = async (
   const integSnap = await integRefs.get();
 
   const integ = integSnap.data();
-  if (!integ || !integ.bskyAppPassword) {
+  if (!integ?.bskyAppPassword) {
     throw new Error('No Bsky app password');
   }
   const passdowd = integ.bskyAppPassword;
@@ -59,7 +59,7 @@ const getBskyCredential = async (
   const generalRefs = settingsRefs.doc('general');
   const generalSnap = await generalRefs.get();
   const general = generalSnap.data();
-  if (!general || !general.bskyUsername) {
+  if (!general?.bskyUsername) {
     throw new Error('No Bsky username');
   }
   const username = general.bskyUsername;
@@ -77,17 +77,20 @@ type OgImage = {
 
 const getOgImageFromUrl = async (
   url: string,
-  fallbackImgurl: string | null
+  fallbackImgurl: string | null,
 ): Promise<OgImage | null> => {
   const options = { url: url };
   const { result } = await ogs(options);
+  if (!fallbackImgurl) {
+    return null;
+  }
   if (
     (result.ogImage === undefined || result.ogImage.length === 0) &&
     fallbackImgurl === null
   ) {
     return null;
   }
-  const res = await fetch(result.ogImage?.at(0)?.url || fallbackImgurl!);
+  const res = await fetch(result.ogImage?.at(0)?.url || fallbackImgurl);
 
   const buffer = await res.arrayBuffer();
   const compressedImage = await sharp(buffer)
@@ -113,7 +116,7 @@ const getOgImageFromUrl = async (
 const registerPrifileFirestore = async (
   username: string,
   appPassword: string,
-  uid: string
+  uid: string,
 ) => {
   const settingsRefs = firestore
     .collection('users')
@@ -125,7 +128,7 @@ const registerPrifileFirestore = async (
       {
         bskyAppPassword: appPassword,
       },
-      { merge: true }
+      { merge: true },
     )
     .then(() => null)
     .catch((e) => e);
@@ -139,7 +142,7 @@ const registerPrifileFirestore = async (
       {
         bskyUsername: username,
       },
-      { merge: true }
+      { merge: true },
     )
     .then(() => null)
     .catch((e) => e);
@@ -156,8 +159,15 @@ export const updateBskyAccount = onCall({ memory: '1GiB' }, async (req) => {
     };
   }
 
+  if (!auth || !auth.uid) {
+    return {
+      err: 'Invalid input',
+      data: null,
+    };
+  }
+
   const { username, appPassword } = data;
-  if (!username || !appPassword) {
+  if (!(username && appPassword)) {
     return {
       err: 'Invalid input',
       data: null,
@@ -165,29 +175,23 @@ export const updateBskyAccount = onCall({ memory: '1GiB' }, async (req) => {
   }
 
   const success = await checkAccountLogin(username, appPassword);
-  if (!success) {
-    return {
-      err: 'Failed to login to Bluesky',
-      data: null,
-    };
-  } else {
-    const err = await registerPrifileFirestore(
-      username,
-      appPassword,
-      auth!.uid
-    );
+  if (success) {
+    const err = await registerPrifileFirestore(username, appPassword, auth.uid);
     if (err) {
       return {
         err: 'Failed to register profile to DB.',
         data: null,
       };
-    } else {
-      return {
-        err: null,
-        data: null,
-      };
     }
+    return {
+      err: null,
+      data: null,
+    };
   }
+  return {
+    err: 'Failed to login to Bluesky',
+    data: null,
+  };
 });
 
 export const deleteBskyAccount = onCall({ memory: '1GiB' }, async (req) => {
@@ -199,10 +203,16 @@ export const deleteBskyAccount = onCall({ memory: '1GiB' }, async (req) => {
       data: null,
     };
   }
+  if (!auth || !auth.uid) {
+    return {
+      err: 'Invalid input',
+      data: null,
+    };
+  }
 
   const settingsRefs = firestore
     .collection('users')
-    .doc(auth!.uid)
+    .doc(auth.uid)
     .collection('settings');
   const integRefs = settingsRefs.doc('integrations');
   const err = await integRefs
@@ -217,12 +227,11 @@ export const deleteBskyAccount = onCall({ memory: '1GiB' }, async (req) => {
       err: 'Failed to delete app password',
       data: null,
     };
-  } else {
-    return {
-      err: null,
-      data: null,
-    };
   }
+  return {
+    err: null,
+    data: null,
+  };
 });
 
 export const onPostRecordBsky = onDocumentCreated(
@@ -288,5 +297,5 @@ export const onPostRecordBsky = onDocumentCreated(
     await agent.post(postRecord);
 
     return null;
-  }
+  },
 );

@@ -1,11 +1,11 @@
 'use client';
 
+import { DeleteForever, Update } from '@mui/icons-material';
+import { Button, message, Pagination, Switch, Tooltip } from 'antd';
+import { useEffect, useState } from 'react';
 import LinkCard from '@/components/record/LinkCard';
 import { FavConfigProvider } from '@/lib/theme';
-import { FavRecord } from '@/types/FavRecord';
-import { Pagination, Switch, Button, Tooltip, message } from 'antd';
-import { useEffect, useState } from 'react';
-import { DeleteForever, Update } from '@mui/icons-material';
+import type { FavRecord } from '@/types/FavRecord';
 
 type Props = {
   numRecords: number;
@@ -35,7 +35,7 @@ const EditTools = ({
       </Tooltip>
       <Tooltip title="Remove this record.">
         <Button
-          danger
+          danger={true}
           icon={<DeleteForever />}
           shape="circle"
           onClick={() => onRemove(page)}
@@ -77,7 +77,7 @@ export default function FavListing({
         });
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pageNum, numRecords]);
+  }, [pageNum, fetchRecords, messageApi.open]);
 
   return (
     <FavConfigProvider>

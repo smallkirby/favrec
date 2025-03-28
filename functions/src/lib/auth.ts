@@ -1,12 +1,11 @@
 import { getAuth } from 'firebase-admin/auth';
-import { AuthData } from 'firebase-functions/lib/common/providers/tasks';
+import type { AuthData } from 'firebase-functions/lib/common/providers/tasks';
 
 export const isAuthed = (auth?: AuthData) => {
   if (auth === undefined) {
     return false;
-  } else {
-    return true;
   }
+  return true;
 };
 
 export const createCustomToken = async (uid: string) => {

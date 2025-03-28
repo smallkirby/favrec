@@ -1,7 +1,7 @@
 'use client';
 
-import { Settings } from '@/types/Settings';
 import { createContext, useState } from 'react';
+import type { Settings } from '@/types/Settings';
 
 type SettingsContextType = {
   settings: Settings | null;
@@ -10,7 +10,7 @@ type SettingsContextType = {
 
 const SettingsContext = createContext<SettingsContextType>({
   settings: null,
-  setSettings: (settings: Settings) => {},
+  setSettings: (_settings: Settings) => {},
 });
 
 type Props = {

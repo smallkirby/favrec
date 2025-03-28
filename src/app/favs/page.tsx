@@ -1,5 +1,8 @@
 'use client';
 
+import { message, Spin } from 'antd';
+import { useRouter } from 'next/navigation';
+import { useContext, useEffect, useState } from 'react';
 import FavListing from '@/components/record/FavListing';
 import { FirebaseAuthContext } from '@/lib/firebase/auth';
 import {
@@ -9,9 +12,6 @@ import {
   updateFav,
 } from '@/lib/firebase/store';
 import { FavConfigProvider } from '@/lib/theme';
-import { Spin, message } from 'antd';
-import { useRouter } from 'next/navigation';
-import { useContext, useEffect, useState } from 'react';
 
 export default function FavsPage() {
   const router = useRouter();
@@ -77,7 +77,8 @@ export default function FavsPage() {
     if (user === null) {
       router.push('/login');
       return;
-    } else if (user === undefined) {
+    }
+    if (user === undefined) {
       return;
     }
 
@@ -88,12 +89,12 @@ export default function FavsPage() {
     });
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user]);
+  }, [user, router.push]);
 
   return (
     <FavConfigProvider>
       {contextHolder}
-      <Spin spinning={!countFetched} fullscreen />
+      <Spin spinning={!countFetched} fullscreen={true} />
 
       <div className="mx-auto w-full text-center md:w-2/3">
         <FavListing

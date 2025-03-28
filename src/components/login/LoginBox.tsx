@@ -1,8 +1,5 @@
 'use client';
 
-import { auth } from '@/lib/firebase/app';
-import { FirebaseAuthContext } from '@/lib/firebase/auth';
-import { FavConfigProvider } from '@/lib/theme';
 import { Button, Card, Image, Spin } from 'antd';
 import {
   GithubAuthProvider,
@@ -11,6 +8,9 @@ import {
 } from 'firebase/auth';
 import { useCallback, useContext, useState } from 'react';
 import { isMobile } from 'react-device-detect';
+import { auth } from '@/lib/firebase/app';
+import { FirebaseAuthContext } from '@/lib/firebase/auth';
+import { FavConfigProvider } from '@/lib/theme';
 
 export default function LoginBox() {
   const [isLoading, setLoading] = useState(false);
@@ -28,8 +28,11 @@ export default function LoginBox() {
 
   return (
     <FavConfigProvider>
-      <Spin spinning={isLoading || user === undefined} fullscreen />
-      <Card className="!mx-auto !border-slate-600 text-center shadow-sm drop-shadow-md md:mx-auto md:w-96">
+      <Spin spinning={isLoading || user === undefined} fullscreen={true} />
+      <Card
+        className="!mx-auto !border-slate-600 text-center shadow-sm drop-shadow-md md:mx-auto
+          md:w-96"
+      >
         <div className="my-2">
           <Image
             src="/logo/github-mark-white.png"

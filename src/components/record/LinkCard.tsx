@@ -1,10 +1,10 @@
 'use client';
 
-import { FavRecord } from '@/types/FavRecord';
 import { Skeleton } from 'antd';
-import Image from 'next/image';
 import dayjs from 'dayjs';
+import Image from 'next/image';
 import { useState } from 'react';
+import type { FavRecord } from '@/types/FavRecord';
 
 type Props = {
   page: FavRecord | null;
@@ -16,17 +16,17 @@ export default function LinkCard({ page, onRemove }: Props) {
 
   return (
     <>
-      <a href={page?.url} target="_blank" className="w-full">
+      <a href={page?.url} target="_blank" className="w-full" rel="noreferrer">
         <div
-          className="flex h-[100px] max-w-5xl cursor-pointer
-            content-between justify-between
-            overflow-hidden rounded-lg border-[1px] border-slate-600 p-0 text-left drop-shadow-md
-            duration-300 hover:border-slate-500 hover:bg-slate-700 hover:shadow-lg md:h-[140px]"
+          className="flex h-[100px] max-w-5xl cursor-pointer content-between justify-between
+            overflow-hidden rounded-lg border-[1px] border-slate-600 p-0 text-left
+            drop-shadow-md duration-300 hover:border-slate-500 hover:bg-slate-700
+            hover:shadow-lg md:h-[140px]"
         >
           {page ? (
             <div
-              className="flex h-full w-full flex-col justify-between overflow-hidden
-            px-3 pb-2 pt-4 text-left md:px-4 md:pb-3"
+              className="flex h-full w-full flex-col justify-between overflow-hidden px-3 pb-2 pt-4
+                text-left md:px-4 md:pb-3"
             >
               <div className="overflow-hidden">
                 <h3
@@ -40,7 +40,7 @@ export default function LinkCard({ page, onRemove }: Props) {
                   {page.title}
                 </h3>
                 <p
-                  className="overflow-hidden text-ellipsis text-[0.625rem] text-gray-400 md:text-sm "
+                  className="overflow-hidden text-ellipsis text-[0.625rem] text-gray-400 md:text-sm"
                   style={{
                     display: '-webkit-box',
                     WebkitLineClamp: 1,
@@ -72,14 +72,14 @@ export default function LinkCard({ page, onRemove }: Props) {
             </div>
           ) : (
             <div className="h-4/5 flex-1 overflow-hidden px-8 py-5">
-              <Skeleton active />
+              <Skeleton active={true} />
             </div>
           )}
 
           {page ? (
             <div className="h-[100px] w-[100px] shrink-0 md:h-[140px] md:w-[200px]">
               {page.imageUrl && !imgNotFound ? (
-                <img
+                <Image
                   src={page.imageUrl}
                   alt={page.title}
                   className="rounded-r-lg"
