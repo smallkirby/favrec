@@ -50,7 +50,7 @@ export default function LinkCard({ page, onRemove }: Props) {
                   {page.description}
                 </p>
               </div>
-              <div className="mt-3 flex flex-shrink-0 items-center justify-between text-left text-[0.625rem]">
+              <div className="mt-3 flex shrink-0 items-center justify-between text-left text-[0.625rem]">
                 <div className="flex items-center">
                   <Image
                     src={page.faviconUrl ?? ''}
@@ -96,14 +96,14 @@ export default function LinkCard({ page, onRemove }: Props) {
                   }}
                 />
               ) : (
-                <Skeleton.Image className="!h-[100px] !w-[100px] md:!h-[140px] md:!w-[200px]" />
+                <Skeleton.Image className="h-[100px]! w-[100px]! md:h-[140px]! md:w-[200px]!" />
               )}
             </div>
           ) : (
             <Skeleton.Image
               active={true}
               style={{ height: '100%', width: '100px' }}
-              className="!h-[100px] !w-[100px] md:!h-[140px] md:!w-[200px]"
+              className="h-[100px]! w-[100px]! md:h-[140px]! md:w-[200px]!"
             />
           )}
         </div>
