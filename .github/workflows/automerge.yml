@@ -14,8 +14,6 @@ jobs:
 
       - name: Enable auto-merge for Dependabot PRs
         run: |
-          git config --local user.name 'GitHub Action'
-          git config --local user.email 'favrec+github-actions[bot]@users.noreply.github.com'
           gh pr merge --auto --merge "$PR_URL"
         env:
           PR_URL: ${{ github.event.pull_request.html_url }}
