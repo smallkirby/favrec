@@ -1,1 +1,6 @@
 * @smallkirby
+
+/package.json
+/package-lock.json
+/functions/package.json
+/functions/package-lock.json
