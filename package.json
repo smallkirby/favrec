@@ -34,7 +34,7 @@
     "@biomejs/biome": "^2.0.0-beta.1",
     "@playwright/test": "^1.52.0",
     "@tailwindcss/postcss": "^4.1.8",
-    "@types/node": "^22",
+    "@types/node": "^24",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "firebase-tools": "^14.6.0",
