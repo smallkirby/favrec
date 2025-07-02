@@ -20,7 +20,7 @@
     "@emotion/styled": "^11.14.1",
     "@mui/icons-material": "^7.2.0",
     "@mui/material": "^7.0.0",
-    "algoliasearch": "^5.29.0",
+    "algoliasearch": "^5.30.0",
     "antd": "^5.26.3",
     "axios": "^1.10.0",
     "dayjs": "^1.11.13",
