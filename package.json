@@ -31,7 +31,7 @@
     "react-dom": "^19"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.0.0-beta.1",
+    "@biomejs/biome": "^2.1.1",
     "@playwright/test": "^1.54.1",
     "@tailwindcss/postcss": "^4.1.11",
     "@types/node": "^24",
