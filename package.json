@@ -37,7 +37,7 @@
     "@types/node": "^24",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "firebase-tools": "^14.11.2",
+    "firebase-tools": "^14.12.0",
     "playwright": "^1.54.1",
     "postcss": "^8",
     "tailwindcss": "^4.1.10",
