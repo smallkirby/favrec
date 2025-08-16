@@ -41,6 +41,15 @@ All the three components are deployed to Firebase using GitHub Actions with the 
 npx firebase deploy --only functions
 ```
 
+## Commit Guidelines
+
+This project includes changes by Claude Code for development assistance.
+
+- **Claude-authored commits**: When Claude Code makes changes, commits MUST include attribution:
+  - "🤖 Generated with [Claude Code](https://claude.ai/code)"
+  - "Co-Authored-By: Claude <noreply@anthropic.com>"
+- **Human-only commits**: If a commit does NOT mention Claude, it indicates NO Claude involvement - all changes are human-authored.
+
 ## Notes / Known Issues
 
 - [FirebaseExtended/action-hosting-deploy](https://github.com/FirebaseExtended/action-hosting-deploy) does not support deployment other than Hosting.
