@@ -25,11 +25,14 @@ const EditTools = ({
   onUpdate: (page: FavRecord) => void;
 }) => {
   return (
-    <div className="flex flex-col">
-      <Tooltip title="Get and update page information again." className="mb-2">
+    <div className="flex flex-col gap-3">
+      <Tooltip title="Get and update page information again.">
         <Button
           icon={<Update />}
           shape="circle"
+          size="large"
+          className="border-pink-400/50 text-pink-400 hover:border-pink-300 hover:text-pink-300 
+            hover:shadow-lg hover:shadow-pink-400/20 transition-all duration-300"
           onClick={() => onUpdate(page)}
         />
       </Tooltip>
@@ -38,6 +41,9 @@ const EditTools = ({
           danger={true}
           icon={<DeleteForever />}
           shape="circle"
+          size="large"
+          className="border-red-400/50 text-red-400 hover:border-red-300 hover:text-red-300 
+            hover:shadow-lg hover:shadow-red-400/20 transition-all duration-300"
           onClick={() => onRemove(page)}
         />
       </Tooltip>
@@ -82,18 +88,18 @@ export default function FavListing({
   return (
     <FavConfigProvider>
       {contextHolder}
-      <div className="sticky top-0 z-50 bg-slate-800 py-2">
+      <div className="sticky top-0 z-50 bg-slate-800 py-2 sm:py-3 border-b border-slate-700/50">
         {/* Smartphone*/}
-        <div className="sm:hidden">
+        <div className="sm:hidden px-2">
           <div className="flex items-center justify-between mb-2">
-            <div className="text-sm text-slate-400 whitespace-nowrap">
+            <div className="text-sm text-slate-300 font-medium whitespace-nowrap">
               {numRecords > 0 &&
                 `${(pageNum - 1) * perPage + 1}-${Math.min(pageNum * perPage, numRecords)} of ${numRecords}`}
             </div>
             <Tooltip title={mode === 'edit' ? 'Tool Mode' : 'View Mode'}>
               <div className="flex items-center gap-2">
                 {mode === 'edit' ? (
-                  <Build className="text-blue-400" style={{ fontSize: 16 }} />
+                  <Build className="text-pink-400" style={{ fontSize: 16 }} />
                 ) : (
                   <Visibility
                     className="text-slate-400"
@@ -101,7 +107,7 @@ export default function FavListing({
                   />
                 )}
                 <Switch
-                  className="bg-slate-600"
+                  className="bg-slate-600 hover:bg-slate-500 transition-colors duration-200"
                   onChange={(checked) => setMode(checked ? 'edit' : 'view')}
                   disabled={notAllowEdit}
                   checked={mode === 'edit'}
@@ -121,8 +127,8 @@ export default function FavListing({
         </div>
 
         {/* PC */}
-        <div className="hidden sm:flex items-center justify-between">
-          <div className="text-sm text-slate-400 whitespace-nowrap w-32">
+        <div className="hidden sm:flex items-center justify-between px-6">
+          <div className="text-sm text-slate-300 font-medium whitespace-nowrap w-40">
             {numRecords > 0 &&
               `${(pageNum - 1) * perPage + 1}-${Math.min(pageNum * perPage, numRecords)} of ${numRecords}`}
           </div>
@@ -135,11 +141,11 @@ export default function FavListing({
               onChange={onPageChange}
             />
           </div>
-          <div className="w-32 flex justify-end">
+          <div className="w-40 flex justify-end">
             <Tooltip title={mode === 'edit' ? 'Tool Mode' : 'View Mode'}>
               <div className="flex items-center gap-2">
                 {mode === 'edit' ? (
-                  <Build className="text-blue-400" style={{ fontSize: 16 }} />
+                  <Build className="text-pink-400" style={{ fontSize: 16 }} />
                 ) : (
                   <Visibility
                     className="text-slate-400"
@@ -147,7 +153,7 @@ export default function FavListing({
                   />
                 )}
                 <Switch
-                  className="bg-slate-600"
+                  className="bg-slate-600 hover:bg-slate-500 transition-colors duration-200"
                   onChange={(checked) => setMode(checked ? 'edit' : 'view')}
                   disabled={notAllowEdit}
                   checked={mode === 'edit'}
@@ -158,14 +164,15 @@ export default function FavListing({
         </div>
       </div>
 
-      <div className="flex justify-center mt-4">
-        <div className="w-full max-w-4xl">
+      <div className="flex justify-center mt-4 sm:mt-6">
+        <div className="w-full max-w-5xl px-2 sm:px-4">
           {recordsShowing.map((record, ix) => (
             <div
               key={record ? record.url : ix}
-              className="mb-4 flex items-center"
+              className="mb-4 sm:mb-6 flex items-center animate-in fade-in-50 duration-300"
+              style={{ animationDelay: `${ix * 50}ms` }}
             >
-              <div className="mr-2" hidden={mode === 'view'}>
+              <div className="mr-3" hidden={mode === 'view'}>
                 <EditTools
                   page={record}
                   onRemove={(p) => onRemove(p.url)}
