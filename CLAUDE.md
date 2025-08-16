@@ -84,10 +84,11 @@ users/{uid}/bsky -> BskyAccount
 - `biome.json`: Code formatting and linting rules
 
 ### Development Notes
-- Emulator data persists in `./firebase-emu/` directory
+- Emulator data persists in `./firebase-emu/` directory (note: README mentions `./emulator-data` but actual location is `./firebase-emu/`)
 - Functions require build step before emulator use
 - Static export means no server-side rendering capabilities
 - CORS restrictions handled via Firebase Functions proxy
+- Next.js images are unoptimized due to static export configuration
 
 ## Development Tips & Lessons Learned
 
@@ -105,6 +106,8 @@ users/{uid}/bsky -> BskyAccount
 - **Ant Design Limitations**: Pagination component has fixed display limits that cannot be easily overridden
 - **Mobile-First Approach**: Design separate layouts for mobile vs desktop rather than trying to force single responsive layout
 - **Component State Sync**: Use `current` instead of `defaultCurrent` for controlled Ant Design components
+- **Theme Consistency**: Site uses pink accent color (`pink-400`) - maintain consistency across all interactive elements
+- **Animation Best Practices**: Use `transition-all duration-300 ease-in-out` for smooth interactions, implement custom animations in separate CSS file
 
 ### Common UI Challenges & Solutions
 - **Pagination Layout Issues**: 
@@ -112,6 +115,10 @@ users/{uid}/bsky -> BskyAccount
   - Solution: Separate layouts for mobile (2-row) and desktop (3-column)
 - **Center Alignment**: Use `flex justify-center` with `max-w-*` containers for proper centering
 - **Responsive Spacing**: Apply different margins/padding for different screen sizes using Tailwind responsive classes
+- **Mobile Text Visibility**: 
+  - Problem: Large text sizes on mobile causing content overflow/hiding
+  - Solution: Use smaller text sizes for mobile (`text-xs`, `text-[0.625rem]`) and scale up for desktop
+  - Important: Balance between readability and space efficiency on small screens
 
 ### Code Quality
 - **Formatting**: Always run `npm run fmt:fix` before commits
@@ -140,6 +147,9 @@ users/{uid}/bsky -> BskyAccount
 - **Always run formatting**: Use `npm run fmt:fix` (NOT `npm run lint:fix`) before commits
 - **Build verification**: Run `npm run build` to verify code validity when making significant changes
 - **Test data management**: Emulator test data is not committed to git - use programmatic generation for testing
+- **Known Issues**: 
+  - Firebase deploy order matters: use `firebase deploy --only firestore,functions` (not `--only functions,firestore`)
+  - Firebase Functions V2 has known authorization issues with `onCall`
 
 ### Language and Communication
 - **Primary language**: Development discussions may be conducted in Japanese per project conventions
