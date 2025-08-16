@@ -82,40 +82,76 @@ export default function FavListing({
   return (
     <FavConfigProvider>
       {contextHolder}
-      <div className="sticky top-0 z-50 flex items-center justify-between bg-slate-800 py-2">
-        <Pagination
-          defaultCurrent={pageNum}
-          total={numRecords}
-          defaultPageSize={perPage}
-          showTotal={(total, range) => `${range[0]}-${range[1]} of ${total}`}
-          showSizeChanger={false}
-          onChange={onPageChange}
-        />
-        <Switch
-          className="ml-2 bg-slate-600"
-          onChange={(checked) => setMode(checked ? 'edit' : 'view')}
-          disabled={notAllowEdit}
-        />
+      <div className="sticky top-0 z-50 bg-slate-800 py-2">
+        {/* Smartphone*/}
+        <div className="sm:hidden">
+          <div className="flex items-center justify-between mb-2">
+            <div className="text-sm text-slate-400 whitespace-nowrap">
+              {numRecords > 0 &&
+                `${(pageNum - 1) * perPage + 1}-${Math.min(pageNum * perPage, numRecords)} of ${numRecords}`}
+            </div>
+            <Switch
+              className="bg-slate-600"
+              onChange={(checked) => setMode(checked ? 'edit' : 'view')}
+              disabled={notAllowEdit}
+            />
+          </div>
+          <div className="flex justify-center">
+            <Pagination
+              current={pageNum}
+              total={numRecords}
+              pageSize={perPage}
+              showSizeChanger={false}
+              onChange={onPageChange}
+            />
+          </div>
+        </div>
+
+        {/* PC */}
+        <div className="hidden sm:flex items-center justify-between">
+          <div className="text-sm text-slate-400 whitespace-nowrap w-32">
+            {numRecords > 0 &&
+              `${(pageNum - 1) * perPage + 1}-${Math.min(pageNum * perPage, numRecords)} of ${numRecords}`}
+          </div>
+          <div className="flex-1 flex justify-center">
+            <Pagination
+              current={pageNum}
+              total={numRecords}
+              pageSize={perPage}
+              showSizeChanger={false}
+              onChange={onPageChange}
+            />
+          </div>
+          <div className="w-32 flex justify-end">
+            <Switch
+              className="bg-slate-600"
+              onChange={(checked) => setMode(checked ? 'edit' : 'view')}
+              disabled={notAllowEdit}
+            />
+          </div>
+        </div>
       </div>
 
-      <div>
-        {recordsShowing.map((record, ix) => (
-          <div
-            key={record ? record.url : ix}
-            className="mb-4 flex items-center"
-          >
-            <div className="mr-2" hidden={mode === 'view'}>
-              <EditTools
-                page={record}
-                onRemove={(p) => onRemove(p.url)}
-                onUpdate={(p) => {
-                  onUpdate(p.url);
-                }}
-              />
+      <div className="flex justify-center mt-4">
+        <div className="w-full max-w-4xl">
+          {recordsShowing.map((record, ix) => (
+            <div
+              key={record ? record.url : ix}
+              className="mb-4 flex items-center"
+            >
+              <div className="mr-2" hidden={mode === 'view'}>
+                <EditTools
+                  page={record}
+                  onRemove={(p) => onRemove(p.url)}
+                  onUpdate={(p) => {
+                    onUpdate(p.url);
+                  }}
+                />
+              </div>
+              <LinkCard page={record} onRemove={onRemove} />
             </div>
-            <LinkCard page={record} onRemove={onRemove} />
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </FavConfigProvider>
   );
