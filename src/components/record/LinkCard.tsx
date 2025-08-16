@@ -69,13 +69,13 @@ export default function LinkCard({ page, onRemove }: Props) {
                 <div className="flex items-center">
                   <div className="mr-2 flex h-[18px] w-[18px] items-center justify-center rounded-sm overflow-hidden">
                     {page.faviconUrl && !imgNotFound ? (
-                      <div className="flex h-full w-full items-center justify-center bg-white/10 p-1 ring-1 ring-white/20 rounded-sm">
+                      <div className="flex h-full w-full items-center justify-center bg-white p-0.5 ring-1 ring-slate-600/70 shadow-md shadow-slate-700/30 rounded-sm border border-slate-500/20">
                         <Image
                           src={page.faviconUrl}
                           alt="favicon"
-                          width={16}
-                          height={16}
-                          className="h-[16px] w-[16px]"
+                          width={17}
+                          height={17}
+                          className="h-[17px] w-[17px] object-contain"
                           onError={() => setImgNotFound(true)}
                         />
                       </div>
