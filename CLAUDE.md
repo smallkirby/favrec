@@ -128,3 +128,19 @@ users/{uid}/bsky -> BskyAccount
 - **Functions Development**: Use `npm run build:watch` for hot reload during development
 - **Emulator Setup**: Start emulators before frontend development to avoid connection issues
 - **Project ID**: Use consistent project ID (`favrec-4d401`) across environments
+
+## Important Security and Operational Guidelines
+
+### File System Access
+- **NEVER** edit or interact with files outside the project root directory
+- All operations must remain within `/home/wataru/Documents/favrec/`
+- This is a mandatory security requirement
+
+### Code Quality Verification
+- **Always run formatting**: Use `npm run fmt:fix` (NOT `npm run lint:fix`) before commits
+- **Build verification**: Run `npm run build` to verify code validity when making significant changes
+- **Test data management**: Emulator test data is not committed to git - use programmatic generation for testing
+
+### Language and Communication
+- **Primary language**: Development discussions may be conducted in Japanese per project conventions
+- **Clear communication**: Ask for clarification rather than making assumptions about requirements
