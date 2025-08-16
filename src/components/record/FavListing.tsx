@@ -1,6 +1,6 @@
 'use client';
 
-import { DeleteForever, Update } from '@mui/icons-material';
+import { Build, DeleteForever, Update, Visibility } from '@mui/icons-material';
 import { Button, message, Pagination, Switch, Tooltip } from 'antd';
 import { useEffect, useState } from 'react';
 import LinkCard from '@/components/record/LinkCard';
@@ -90,11 +90,24 @@ export default function FavListing({
               {numRecords > 0 &&
                 `${(pageNum - 1) * perPage + 1}-${Math.min(pageNum * perPage, numRecords)} of ${numRecords}`}
             </div>
-            <Switch
-              className="bg-slate-600"
-              onChange={(checked) => setMode(checked ? 'edit' : 'view')}
-              disabled={notAllowEdit}
-            />
+            <Tooltip title={mode === 'edit' ? 'Tool Mode' : 'View Mode'}>
+              <div className="flex items-center gap-2">
+                {mode === 'edit' ? (
+                  <Build className="text-blue-400" style={{ fontSize: 16 }} />
+                ) : (
+                  <Visibility
+                    className="text-slate-400"
+                    style={{ fontSize: 16 }}
+                  />
+                )}
+                <Switch
+                  className="bg-slate-600"
+                  onChange={(checked) => setMode(checked ? 'edit' : 'view')}
+                  disabled={notAllowEdit}
+                  checked={mode === 'edit'}
+                />
+              </div>
+            </Tooltip>
           </div>
           <div className="flex justify-center">
             <Pagination
@@ -123,11 +136,24 @@ export default function FavListing({
             />
           </div>
           <div className="w-32 flex justify-end">
-            <Switch
-              className="bg-slate-600"
-              onChange={(checked) => setMode(checked ? 'edit' : 'view')}
-              disabled={notAllowEdit}
-            />
+            <Tooltip title={mode === 'edit' ? 'Tool Mode' : 'View Mode'}>
+              <div className="flex items-center gap-2">
+                {mode === 'edit' ? (
+                  <Build className="text-blue-400" style={{ fontSize: 16 }} />
+                ) : (
+                  <Visibility
+                    className="text-slate-400"
+                    style={{ fontSize: 16 }}
+                  />
+                )}
+                <Switch
+                  className="bg-slate-600"
+                  onChange={(checked) => setMode(checked ? 'edit' : 'view')}
+                  disabled={notAllowEdit}
+                  checked={mode === 'edit'}
+                />
+              </div>
+            </Tooltip>
           </div>
         </div>
       </div>
