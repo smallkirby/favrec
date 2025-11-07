@@ -23,7 +23,7 @@
     "firebase-functions": "^6.6.0",
     "jsdom": "^27.1.0",
     "open-graph-scraper": "^6.10.0",
-    "sharp": "^0.34.4"
+    "sharp": "^0.34.5"
   },
   "devDependencies": {
     "@types/algoliasearch": "^4.0.4",
