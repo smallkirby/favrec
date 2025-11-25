@@ -15,12 +15,12 @@
     "fmt:fix": "biome check . --write"
   },
   "dependencies": {
-    "@ant-design/cssinjs": "^2.0.0",
+    "@ant-design/cssinjs": "^2.0.1",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
     "@mui/icons-material": "^7.3.5",
     "@mui/material": "^7.0.0",
-    "algoliasearch": "^5.44.0",
+    "algoliasearch": "^5.45.0",
     "antd": "^6.0.0",
     "axios": "^1.13.2",
     "dayjs": "^1.11.19",
