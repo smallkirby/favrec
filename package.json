@@ -15,7 +15,7 @@
     "fmt:fix": "biome check . --write"
   },
   "dependencies": {
-    "@ant-design/cssinjs": "^2.0.2",
+    "@ant-design/cssinjs": "^2.0.3",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
     "@mui/icons-material": "^7.3.7",
@@ -24,7 +24,7 @@
     "antd": "^6.2.0",
     "axios": "^1.13.2",
     "dayjs": "^1.11.19",
-    "firebase": "^12.7.0",
+    "firebase": "^12.8.0",
     "next": "^16.0.4",
     "react": "^19",
     "react-device-detect": "^2.2.3",
