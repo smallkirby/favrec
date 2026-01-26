@@ -14,10 +14,10 @@
   },
   "main": "lib/index.js",
   "dependencies": {
-    "@atproto/api": "^0.18.16",
+    "@atproto/api": "^0.18.17",
     "@types/jsdom": "^27.0.0",
     "algoliasearch": "^5.47.0",
-    "axios": "^1.13.2",
+    "axios": "^1.13.3",
     "dayjs": "^1.11.19",
     "firebase-admin": "^13.6.0",
     "firebase-functions": "^6.6.0",
