@@ -21,7 +21,7 @@
     "@mui/icons-material": "^7.3.7",
     "@mui/material": "^7.0.0",
     "algoliasearch": "^5.47.0",
-    "antd": "^6.2.2",
+    "antd": "^6.2.3",
     "axios": "^1.13.4",
     "dayjs": "^1.11.19",
     "firebase": "^12.8.0",
