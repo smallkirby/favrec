@@ -15,10 +15,10 @@
     "fmt:fix": "biome check . --write"
   },
   "dependencies": {
-    "@ant-design/cssinjs": "^2.1.0",
+    "@ant-design/cssinjs": "^2.1.2",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
-    "@mui/icons-material": "^7.3.8",
+    "@mui/icons-material": "^7.3.9",
     "@mui/material": "^7.0.0",
     "algoliasearch": "^5.49.1",
     "antd": "^6.3.1",
