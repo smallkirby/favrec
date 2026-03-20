@@ -24,7 +24,7 @@
     "antd": "^6.3.3",
     "axios": "^1.13.6",
     "dayjs": "^1.11.20",
-    "firebase": "^12.10.0",
+    "firebase": "^12.11.0",
     "next": "^16.0.4",
     "react": "^19",
     "react-device-detect": "^2.2.3",
