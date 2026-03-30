@@ -17,7 +17,7 @@
     "@atproto/api": "^0.19.5",
     "@types/jsdom": "^28.0.1",
     "algoliasearch": "^5.50.0",
-    "axios": "^1.13.6",
+    "axios": "^1.14.0",
     "dayjs": "^1.11.20",
     "firebase-admin": "^13.6.0",
     "firebase-functions": "^6.6.0",
