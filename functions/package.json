@@ -19,8 +19,8 @@
     "algoliasearch": "^5.50.2",
     "axios": "^1.15.0",
     "dayjs": "^1.11.20",
-    "firebase-admin": "^13.6.0",
-    "firebase-functions": "^6.6.0",
+    "firebase-admin": "^13.8.0",
+    "firebase-functions": "^7.2.5",
     "jsdom": "^29.0.2",
     "open-graph-scraper": "^6.11.0",
     "sharp": "^0.34.5"
