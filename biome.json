@@ -19,10 +19,8 @@
     "rules": {
       "style": {
         "useLiteralEnumMembers": "error",
-        "noCommaOperator": "error",
         "useNodejsImportProtocol": "error",
         "useAsConstAssertion": "error",
-        "useNumericLiterals": "error",
         "useEnumInitializers": "error",
         "useSelfClosingElements": "error",
         "useConst": "error",
@@ -35,12 +33,21 @@
         "noParameterAssign": "error",
         "noNonNullAssertion": "error",
         "useDefaultParameterLast": "error",
-        "noArguments": "error",
         "useImportType": "error",
         "useExportType": "error",
         "noUselessElse": "error",
         "useShorthandFunctionType": "error"
+      },
+      "complexity": {
+        "noArguments": "error",
+        "useNumericLiterals": "error",
+        "noCommaOperator": "error"
       }
+    }
+  },
+  "css": {
+    "parser": {
+      "tailwindDirectives": true
     }
   },
   "javascript": { "formatter": { "quoteStyle": "single" } }
