@@ -1,5 +1,6 @@
 import '@/app/globals.css';
 import type { Metadata } from 'next';
+import { Noto_Sans_JP } from 'next/font/google';
 import Header from '@/components/common/Header';
 import StyledComponentsRegistry from '@/lib/AntdRegistry';
 import { FirebaseAuthProvider } from '@/lib/firebase/auth';
@@ -46,13 +47,19 @@ export const metadata: Metadata = {
   },
 };
 
+const noto = Noto_Sans_JP({
+  subsets: ['latin'],
+  weight: ['400', '700'],
+  display: 'block',
+});
+
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" className={noto.className}>
       <StyledComponentsRegistry>
         <FavConfigProvider>
           <SettingsProvider>

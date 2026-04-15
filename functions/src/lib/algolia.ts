@@ -21,11 +21,23 @@ type AlgoliaAdminProfile = {
   searchApiKey: string;
 };
 
+type AlgoliaClientWithSecuredApiKey = ReturnType<typeof algoliasearch> & {
+  generateSecuredApiKey: (options: {
+    parentApiKey: string;
+    restrictions?: {
+      filters?: string;
+    };
+  }) => string;
+};
+
 const generateSecuredApiKey = (
   uid: string,
   profile: AlgoliaAdminProfile,
 ): string => {
-  const client = algoliasearch(profile.applicationId, profile.adminApiKey);
+  const client = algoliasearch(
+    profile.applicationId,
+    profile.adminApiKey,
+  ) as AlgoliaClientWithSecuredApiKey;
   return client.generateSecuredApiKey({
     parentApiKey: profile.searchApiKey,
     restrictions: {
@@ -132,7 +144,7 @@ export const createAlgoliaSecuredApiKey = onCall(
       };
     }
 
-    if (!auth || !auth.uid) {
+    if (!auth?.uid) {
       return {
         err: 'Invalid input',
         data: null,
