@@ -1,7 +1,11 @@
 import { getAuth } from 'firebase-admin/auth';
-import type { AuthData } from 'firebase-functions/lib/common/providers/tasks';
+import type { CallableRequest } from 'firebase-functions/v2/https';
 
-export const isAuthed = (auth?: AuthData) => {
+type CallableAuthData = CallableRequest['auth'];
+
+export const isAuthed = (
+  auth?: CallableAuthData,
+): auth is NonNullable<CallableAuthData> => {
   if (auth === undefined) {
     return false;
   }
