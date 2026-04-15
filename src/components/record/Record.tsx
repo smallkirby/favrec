@@ -1,6 +1,6 @@
 'use client';
 
-import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutlineRounded';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
 import ContentPasteIcon from '@mui/icons-material/ContentPaste';
 import { Button, Card, Form, Input, message, Tooltip, Typography } from 'antd';
