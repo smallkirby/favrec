@@ -49,35 +49,30 @@ export default function AlgoliaSettings({ user, settings }: Props) {
   ]);
 
   return (
-    <>
-      <FavConfigProvider>
-        {contextHolder}
+    <FavConfigProvider>
+      {contextHolder}
 
-        <div className="mb-3 flex items-center justify-between pr-4">
-          <h2 className="mb-1 mr-4 text-2xl font-bold">Algolia Search</h2>
-          <Switch
-            className="bg-slate-600"
-            checked={isEnabled}
-            onClick={() => setIsEnabled(!isEnabled)}
-          />
-        </div>
-        <p className="mb-3">
-          Enabling this will empower your search experience with Algolia.
-        </p>
-        <p className="text-xs text-slate-500">
-          If this setting is enabled, your records will be indexed by{' '}
-          <a
-            href="https://www.algolia.com/"
-            className="text-pink-500 underline"
-          >
-            Algolia
-          </a>
-          . Each user is granted a unique API key to access their own records,
-          so your data is inaccessible to others. You can delete the stored data
-          at any time by disabling this setting. It might take a few minutes for
-          the data to be indexed or removed since you change this setting.
-        </p>
-      </FavConfigProvider>
-    </>
+      <div className="mb-3 flex items-center justify-between pr-4">
+        <h2 className="mb-1 mr-4 text-2xl font-bold">Algolia Search</h2>
+        <Switch
+          className="bg-slate-600"
+          checked={isEnabled}
+          onClick={() => setIsEnabled(!isEnabled)}
+        />
+      </div>
+      <p className="mb-3">
+        Enabling this will empower your search experience with Algolia.
+      </p>
+      <p className="text-xs text-slate-500">
+        If this setting is enabled, your records will be indexed by{' '}
+        <a href="https://www.algolia.com/" className="text-pink-500 underline">
+          Algolia
+        </a>
+        . Each user is granted a unique API key to access their own records, so
+        your data is inaccessible to others. You can delete the stored data at
+        any time by disabling this setting. It might take a few minutes for the
+        data to be indexed or removed since you change this setting.
+      </p>
+    </FavConfigProvider>
   );
 }

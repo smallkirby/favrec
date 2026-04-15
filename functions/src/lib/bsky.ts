@@ -1,6 +1,5 @@
 import { AtpAgent, RichText } from '@atproto/api';
-import { getFirestore } from 'firebase-admin/firestore';
-import { FieldValue } from 'firebase-admin/firestore';
+import { FieldValue, getFirestore } from 'firebase-admin/firestore';
 import { onDocumentCreated } from 'firebase-functions/firestore';
 import { onCall } from 'firebase-functions/v2/https';
 import ogs from 'open-graph-scraper';
@@ -159,7 +158,7 @@ export const updateBskyAccount = onCall({ memory: '1GiB' }, async (req) => {
     };
   }
 
-  if (!auth || !auth.uid) {
+  if (!auth?.uid) {
     return {
       err: 'Invalid input',
       data: null,
@@ -203,7 +202,7 @@ export const deleteBskyAccount = onCall({ memory: '1GiB' }, async (req) => {
       data: null,
     };
   }
-  if (!auth || !auth.uid) {
+  if (!auth?.uid) {
     return {
       err: 'Invalid input',
       data: null,
