@@ -26,7 +26,6 @@
     "sharp": "^0.34.5"
   },
   "devDependencies": {
-    "@types/algoliasearch": "^4.0.4",
     "firebase-functions-test": "^3.4.1",
     "typescript": "^6.0.2"
   },
