@@ -42,6 +42,6 @@
     "postcss": "^8",
     "tailwindcss": "^4.2.2",
     "tree-kill": "^1.2.2",
-    "typescript": "^5"
+    "typescript": "^6"
   }
 }
