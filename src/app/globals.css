@@ -1,6 +1,3 @@
-@import url("https://fonts.googleapis.com/css2?family=Pacifico&family=Raleway&display=swap")
-  layer(base);
-
 @import "tailwindcss";
 @import "../styles/animations.css";
 
@@ -10,8 +7,6 @@
     from 180deg at 50% 50%,
     var(--tw-gradient-stops)
   );
-
-  --font-cute: Pacifico, cursive;
 }
 
 /*
@@ -33,7 +28,6 @@
 }
 
 body {
-  font-family: "Noto Sans", sans-serif;
   font-size: 16px;
   line-height: 1.6;
   letter-spacing: 0.025em;
