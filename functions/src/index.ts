@@ -30,7 +30,7 @@ export const updatePageInfo = onCall(
       };
     }
 
-    if (!auth || !auth.uid) {
+    if (!auth?.uid) {
       return {
         err: 'Invalid input',
         data: null,
@@ -101,7 +101,7 @@ export const recordPageInfo = onCall(
       };
     }
 
-    if (!auth || !auth.uid) {
+    if (!auth?.uid) {
       return {
         err: 'Invalid input',
         data: null,
@@ -169,7 +169,7 @@ export const getCustomToken = onCall(
       };
     }
 
-    if (!auth || !auth.uid) {
+    if (!auth?.uid) {
       return {
         err: 'Invalid input',
         data: null,

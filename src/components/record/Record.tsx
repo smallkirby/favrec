@@ -3,7 +3,7 @@
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutlineRounded';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
 import ContentPasteIcon from '@mui/icons-material/ContentPaste';
-import { Button, Card, Form, Input, message, Tooltip, Typography } from 'antd';
+import { Button, Card, Form, Input, message, Typography } from 'antd';
 import { useForm } from 'antd/es/form/Form';
 import { useContext, useEffect, useState } from 'react';
 import { FirebaseAuthContext } from '@/lib/firebase/auth';
@@ -43,7 +43,7 @@ export default function Record() {
             setClipboardUrl(text);
           }
         }
-      } catch (e) {
+      } catch (_e) {
         // Clipboard access denied or not available
       }
     };

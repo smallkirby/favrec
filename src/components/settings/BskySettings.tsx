@@ -19,7 +19,7 @@ type Props = {
   disabled?: boolean;
 };
 
-const BskyAccountPanel = ({ user, settings, disabled }: Props) => {
+const BskyAccountPanel = ({ settings, disabled }: Props) => {
   type FieldType = {
     username?: string;
     appPassword?: string;

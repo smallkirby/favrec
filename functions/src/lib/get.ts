@@ -14,7 +14,7 @@ export const getFavsPaginated = onCall({ memory: '1GiB' }, async (req) => {
       data: null,
     };
   }
-  if (!auth || !auth.uid) {
+  if (!auth?.uid) {
     return {
       err: 'Invalid input',
       data: null,

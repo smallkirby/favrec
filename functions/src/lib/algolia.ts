@@ -132,7 +132,7 @@ export const createAlgoliaSecuredApiKey = onCall(
       };
     }
 
-    if (!auth || !auth.uid) {
+    if (!auth?.uid) {
       return {
         err: 'Invalid input',
         data: null,
