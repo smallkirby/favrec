@@ -164,7 +164,26 @@ export const fetchPageInfo = async (
   if (!charset) {
     charset = 'utf-8';
   }
-  res.data = Buffer.from(res.data, 'binary').toString(charset as BufferEncoding);
+  const validEncodings: BufferEncoding[] = [
+    'ascii',
+    'utf8',
+    'utf-8',
+    'utf16le',
+    'utf-16le',
+    'ucs2',
+    'ucs-2',
+    'base64',
+    'base64url',
+    'latin1',
+    'binary',
+    'hex',
+  ];
+  const encoding: BufferEncoding = validEncodings.includes(
+    charset as BufferEncoding,
+  )
+    ? (charset as BufferEncoding)
+    : 'utf-8';
+  res.data = Buffer.from(res.data, 'binary').toString(encoding);
 
   const { document } = new JSDOM(res.data).window;
   const metaTags = document.getElementsByTagName('meta');
