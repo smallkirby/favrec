@@ -156,15 +156,15 @@ export const fetchPageInfo = async (
   }
 
   const contentType = res.headers['content-type'];
-  if (!contentType?.includes('text/html')) {
+  if (typeof contentType !== 'string' || !contentType.includes('text/html')) {
     return null;
   }
 
-  let charset = res.headers['content-type'].split('charset=')[1];
+  let charset = contentType.split('charset=')[1];
   if (!charset) {
     charset = 'utf-8';
   }
-  res.data = Buffer.from(res.data, 'binary').toString(charset);
+  res.data = Buffer.from(res.data, 'binary').toString(charset as BufferEncoding);
 
   const { document } = new JSDOM(res.data).window;
   const metaTags = document.getElementsByTagName('meta');
