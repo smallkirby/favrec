@@ -16,7 +16,7 @@
   "dependencies": {
     "@atproto/api": "^0.20.6",
     "@types/jsdom": "^28.0.3",
-    "algoliasearch": "^5.52.1",
+    "algoliasearch": "^5.53.0",
     "axios": "^1.16.1",
     "dayjs": "^1.11.21",
     "firebase-admin": "^13.10.0",
