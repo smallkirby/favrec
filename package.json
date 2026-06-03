@@ -22,7 +22,7 @@
     "@mui/material": "^9.0.0",
     "algoliasearch": "^5.53.0",
     "antd": "^6.4.3",
-    "axios": "^1.16.1",
+    "axios": "^1.17.0",
     "dayjs": "^1.11.21",
     "firebase": "^12.14.0",
     "next": "^16.2.7",
