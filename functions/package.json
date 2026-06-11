@@ -14,7 +14,7 @@
   },
   "main": "lib/index.js",
   "dependencies": {
-    "@atproto/api": "^0.20.12",
+    "@atproto/api": "^0.20.13",
     "@types/jsdom": "^28.0.3",
     "algoliasearch": "^5.53.0",
     "axios": "^1.17.0",
@@ -23,7 +23,7 @@
     "firebase-functions": "^7.2.5",
     "jsdom": "^29.1.1",
     "open-graph-scraper": "^6.11.0",
-    "sharp": "^0.34.5"
+    "sharp": "^0.35.0"
   },
   "devDependencies": {
     "firebase-functions-test": "^3.5.0",
