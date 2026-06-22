@@ -23,7 +23,7 @@
     "firebase-functions": "^7.2.5",
     "jsdom": "^29.1.1",
     "open-graph-scraper": "^6.11.0",
-    "sharp": "^0.35.1"
+    "sharp": "^0.35.2"
   },
   "devDependencies": {
     "firebase-functions-test": "^3.5.0",
