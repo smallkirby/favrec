@@ -14,7 +14,7 @@
   },
   "main": "lib/index.js",
   "dependencies": {
-    "@atproto/api": "^0.20.27",
+    "@atproto/api": "^0.20.28",
     "@types/jsdom": "^28.0.3",
     "algoliasearch": "^5.55.2",
     "axios": "^1.18.1",
