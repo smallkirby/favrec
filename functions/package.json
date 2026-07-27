@@ -14,14 +14,14 @@
   },
   "main": "lib/index.js",
   "dependencies": {
-    "@atproto/api": "^0.20.33",
+    "@atproto/api": "^0.20.34",
     "@types/jsdom": "^28.0.3",
     "algoliasearch": "^5.56.0",
     "axios": "^1.18.1",
     "dayjs": "^1.11.21",
     "firebase-admin": "^13.10.0",
     "firebase-functions": "^7.2.5",
-    "jsdom": "^29.1.1",
+    "jsdom": "^30.0.0",
     "open-graph-scraper": "^6.12.0",
     "sharp": "^0.35.3"
   },
