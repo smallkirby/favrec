@@ -40,7 +40,7 @@
     "firebase-tools": "^15.34.2",
     "playwright": "^1.65.0",
     "postcss": "^8",
-    "tailwindcss": "^4.3.4",
+    "tailwindcss": "^4.3.5",
     "tree-kill": "^1.2.2",
     "typescript": "^6"
   }
