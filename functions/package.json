@@ -14,9 +14,9 @@
   },
   "main": "lib/index.js",
   "dependencies": {
-    "@atproto/api": "^0.32.1",
+    "@atproto/api": "^0.32.3",
     "@types/jsdom": "^30.0.0",
-    "algoliasearch": "^5.64.0",
+    "algoliasearch": "^5.65.0",
     "axios": "^1.21.1",
     "dayjs": "^1.11.23",
     "firebase-admin": "^13.10.0",
